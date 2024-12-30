@@ -1,0 +1,21 @@
+{
+  "nc": "#06060b",
+  "base": "#0F0E0F",
+  "overlay": "#161616",
+  "surface": "#202020",
+  "muted": "#737373",
+  "subtle": "#c7c7c7",
+  "text": "#e3e3e3",
+  "color0": "#b3b3b3",
+  "color1": "#9e9e9e",
+  "color2": "#bababa",
+  "color3": "#8a8a8a",
+  "color4": "#ff0000",
+  "color5": "#ba1c1c",
+  "color6": "#c4c4c4",
+  "color7": "#7a7a7a",
+  "color8": "#dedede",
+  "color9": "#d4d4d4",
+  "color10": "#ffffff",
+  "color11": "#a6a6a6"
+}
