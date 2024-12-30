@@ -55,12 +55,17 @@ local lsp_attach = function(client, buf)
     vim.api.nvim_buf_set_option(buf, "formatexpr", "v:lua.vim.lsp.formatexpr()")
 	vim.api.nvim_buf_set_option(buf, "omnifunc", "v:lua.vim.lsp.omnifunc")
 	vim.api.nvim_buf_set_option(buf, "tagfunc", "v:lua.vim.lsp.tagfunc")
+
+    print("attaching to buf")
 end
 
 local lsp_defaults = {
     flags = {
         debounce_text_changes = 150,
     },
+    root = vim.loop.cwd(),
+    capabilities = capabilities,
+    on_attach = lsp_attach,
     root = vim.loop.cwd(),
     capabilities = capabilities,
     on_attach = lsp_attach,
@@ -75,12 +80,12 @@ lspconfig.util.default_config = vim.tbl_deep_extend(
 
 require("lazy-lsp").setup {
     -- By default all available servers are set up. Exclude unwanted or misbehaving servers.
-    excluded_servers = {},
+    excluded_servers = { "buf_ls", "ccls", "clangd", "sourcekit " },
     -- Alternatively specify preferred servers for a filetype (others will be ignored).
     preferred_servers = {
         html = { "html", "ts_ls", "cssls" },
-        js = { "ts_ls" },
-        python = { "pyright" }
+        python = { "pyright" },
+        lua = { "lua_ls" }
     },
     prefer_local = false,
     default_config = {
@@ -88,7 +93,7 @@ require("lazy-lsp").setup {
               debounce_text_changes = 150,
         },
         on_attach = lsp_attach,
-        capabilities = capabilities,
+        capabilities = capabilities
     },
     configs = {
         html = {
@@ -118,6 +123,11 @@ require("lazy-lsp").setup {
             }
         }
     },
+}
+
+-- Setup clangd manually
+lspconfig.clangd.setup{
+    capabilities = capabilities
 }
 
 --[[
