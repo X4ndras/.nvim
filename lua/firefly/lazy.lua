@@ -114,9 +114,9 @@ local plugins = {
     -------------------------
 
     --'X4ndras/pristine-mint',
-    --'X4ndras/firefly-theme',
+    'X4ndras/firefly-theme',
 
-    { dir = '~/.config/nvim/.dev/firefly-theme' },
+    --{ dir = '~/.config/nvim/.dev/firefly-theme' },
 }
 
 require('lazy').setup(plugins)
