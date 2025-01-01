@@ -66,9 +66,6 @@ local lsp_defaults = {
     root = vim.loop.cwd(),
     capabilities = capabilities,
     on_attach = lsp_attach,
-    root = vim.loop.cwd(),
-    capabilities = capabilities,
-    on_attach = lsp_attach,
 }
 lsp_defaults.capabilities.textDocument.completion.completionItem.snippetSupport = true
 
