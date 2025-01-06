@@ -9,8 +9,15 @@ require("luasnip").setup({
     delete_check_events = 'TextChanged',
 })
 
+-- autopairs setup
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on(
+    'confirm_done',
+    cmp_autopairs.on_confirm_done()
+)
+
 cmp.setup({
-    preselect = 'item',
+    --preselect = 'item',
     completion = {
         completeopt = 'menu,menuone,noinsert',
     },
@@ -23,51 +30,51 @@ cmp.setup({
     },
 
     window = {
-        completion = {
-            border = 'rounded',
-            scrollbar = '║',
-        },
-        documentation = {
-            border = 'rounded',
-            scrollbar = '║',
-        }
+        completion = { border = 'rounded', scrollbar = '║', },
+        documentation = { border = 'rounded', scrollbar = '║', }
     },
 
     mapping = cmp.mapping.preset.insert({
-        ['<C-j>'] = cmp.mapping.scroll_docs(4),
-        ['<C-k>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-J>'] = cmp.mapping.scroll_docs(4),
+        ['<C-K>'] = cmp.mapping.scroll_docs(-4),
         ['<M-o>'] = cmp.mapping.abort(),
         ['<M-i>'] = cmp.mapping.confirm({ select = true }),
+
         ['<M-j>'] = cmp.mapping(function (fallback)
             if cmp.visible() then
                 cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
+            elseif luasnip.locally_jumpable(1) then
+                luasnip.jump(1)
             elseif cmp.has_words_before() then
                 cmp.complete()
-            else
-                fallback()
-            end
+            else fallback() end
         end, { 'i', 's' }),
 
         ['<M-k>'] = cmp.mapping(function (fallback)
             if cmp.visible() then
                 cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
+            elseif luasnip.locally_jumpable(-1) then
                 luasnip.jump(-1)
             else
                 fallback()
             end
         end, { 'i', 's' }),
-        --['<C-e>'] = cmp.mapping.complete(),
-        --['<C-i>'] = cmp.mapping.confirm({ select = true }), 
     }),
+
     sources = cmp.config.sources({
-        { name = 'luasnip' },
-        { name = 'nvim_lsp' },
+        {
+            name = 'nvim_lsp',
+            priority = 1
+        },
+        {
+            name = 'luasnip',
+            priority = 2
+        },
         { name = 'nvim_lsp_signature_help' },
+        { name = 'path' },
     }, {
         { name = 'buffer' },
+        { name = 'cmdline' },
     }),
 
     formatting = {
@@ -110,15 +117,8 @@ cmp.setup({
 })
 
 
--- autopairs setup
-local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-cmp.event:on(
-    'confirm_done',
-    cmp_autopairs.on_confirm_done()
-)
-
-
 -- Keymaps for Luasnip
+--[[
 local ls = require("luasnip")
 vim.keymap.set({ "i", "s" }, "<M-l>", function()
 	if ls.expand_or_jumpable() then
@@ -131,6 +131,7 @@ vim.keymap.set({ "i", "s" }, "<M-h>", function()
 		ls.jump(-1)
 	end
 end, { silent = true })
+]]--
 
 --[[
 vim.keymap.set("i", "<C-l>", function()

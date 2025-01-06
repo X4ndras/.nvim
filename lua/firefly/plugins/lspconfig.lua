@@ -52,6 +52,13 @@ local lsp_attach = function(client, buf)
         "<cmd>lua vim.diagnostic.goto_next()<CR>",
         { desc = "Quickfix Diagnostics", noremap = true, silent = false })
 
+    -- add a keybinding to show where a function is used in the project
+    --[[
+    vim.api.nvim_buf_set_keymap(buf, "n", "<M-s>",
+        "<cmd>Telescope lsp_references<CR>",
+        { desc = "Show Where Function Is Used", noremap = true, silent = true })
+        ]]--
+
     vim.api.nvim_buf_set_option(buf, "formatexpr", "v:lua.vim.lsp.formatexpr()")
 	vim.api.nvim_buf_set_option(buf, "omnifunc", "v:lua.vim.lsp.omnifunc")
 	vim.api.nvim_buf_set_option(buf, "tagfunc", "v:lua.vim.lsp.tagfunc")
@@ -67,6 +74,7 @@ local lsp_defaults = {
     capabilities = capabilities,
     on_attach = lsp_attach,
 }
+
 lsp_defaults.capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 lspconfig.util.default_config = vim.tbl_deep_extend(
@@ -76,9 +84,7 @@ lspconfig.util.default_config = vim.tbl_deep_extend(
 )
 
 require("lazy-lsp").setup {
-    -- By default all available servers are set up. Exclude unwanted or misbehaving servers.
     excluded_servers = { "buf_ls", "ccls", "clangd", "sourcekit " },
-    -- Alternatively specify preferred servers for a filetype (others will be ignored).
     preferred_servers = {
         html = { "html", "ts_ls", "cssls" },
         python = { "pyright" },
@@ -93,6 +99,25 @@ require("lazy-lsp").setup {
         capabilities = capabilities
     },
     configs = {
+        rust_analyzer = {
+            settings = {
+                checkOnSave = {
+                    command = "clippy",
+                },
+                lens = {
+                    enable = true,
+                    references = {
+                        adt = { enable = true },
+                        enumVariant = { enable = true },
+                        method = { enable = true },
+                        trait = { enable = true },
+                    },
+                },
+                procMacro = {
+                    enable = true
+                },
+            }
+        },
         html = {
             settings = {
                 format = {
@@ -114,7 +139,7 @@ require("lazy-lsp").setup {
         pyright = {
             settings = {
                 python = {
-                    pythonPath = vim.loop.cwd() .. "/.venv/Scripts/python.exe"
+                    --pythonPath = vim.loop.cwd() .. "/.venv/Scripts/python.exe"
                 }
 
             }
@@ -127,69 +152,3 @@ lspconfig.clangd.setup{
     capabilities = capabilities
 }
 
---[[
-vim.g.rustaceanvim = {
-  server = {
-    on_attach = lsp_attach,
-  },
-}
-
-
-
-lspconfig.pyright.setup {
-    settings = {
-        python = {
-            pythonPath = vim.loop.cwd() .. "/.venv/Scripts/python.exe"
-        }
-    }
-}
-
-lspconfig.lua_ls.setup {
-    settings = {
-        Lua = {
-            diagnostics = {
-                globals = { 'vim' },
-            },
-        },
-    },
-}
-
---[[
-lspconfig.rust_analyzer.setup({
-    settings = {
-        ["rust-analyzer"] = {
-            imports = {
-                granularity = {
-                    group = "module",
-                },
-                prefix = "self",
-            },
-            cargo = {
-                buildScripts = {
-                    enable = true,
-                },
-            },
-            procMacro = {
-                enable = true
-            }
-        }
-    }
-})
-
-local languages = {
-    "html",
-    "cssls",
-    "clangd",
-    "ts_ls",
-    "gopls"
-    --"dockerls",
-    --"htmx"
-}
-
-for _, lang in pairs(languages) do
-    lspconfig[lang].setup{
-        capabilities = capabilities
-    }
-end
-
-]]--

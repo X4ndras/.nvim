@@ -7,9 +7,8 @@ local plugins = {
     'neovim/nvim-lspconfig',
 
     -- cmp (Auto completion)
+    'hrsh7th/nvim-cmp',
     'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/nvim-cmp',
-    'hrsh7th/nvim-cmp',
     'hrsh7th/cmp-buffer',
     'hrsh7th/cmp-path',
     'hrsh7th/cmp-cmdline',
@@ -28,21 +27,6 @@ local plugins = {
        }
     },
 
-    {
-      "dundalek/lazy-lsp.nvim",
-      dependencies = { "neovim/nvim-lspconfig" },
-    },
-
-
-    {
-       'nvimdev/lspsaga.nvim',
-       dependencies = {
-        'nvim-treesitter/nvim-treesitter',
-       }
-    },
-
-    -- Snippet Engine
-    { 'L3MON4D3/LuaSnip', version = "v2.3.0" },
     -- Snippets 
     { 'L3MON4D3/LuaSnip', version = "v2.3.0" },
     -- Snippets 
@@ -54,10 +38,6 @@ local plugins = {
 
     -- Autoclosing tags (<html></html>)
     'windwp/nvim-ts-autotag',
-
-    --{'rust-lang/rust.vim'},
-    -- This plugin is already lazy
-    --{ 'mrcjkb/rustaceanvim', version = '^5', lazy = false, },
 
     --{'rust-lang/rust.vim'},
     -- This plugin is already lazy
