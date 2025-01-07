@@ -9,6 +9,7 @@ require("luasnip").setup({
     delete_check_events = 'TextChanged',
 })
 
+
 -- autopairs setup
 local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 cmp.event:on(
@@ -140,3 +141,56 @@ vim.keymap.set("i", "<C-l>", function()
 	end
 end)
 --]]
+--[[
+require("codecompanion").setup({
+  display = {
+    diff = {
+      provider = "ollama",
+    },
+  },
+  opts = {
+    log_level = "DEBUG",
+    system_prompt = "",
+  },
+  adapters = {
+    ollama = function()
+      return require("codecompanion.adapters").extend("openai_compatible", {
+        schema = {
+            model = {
+                desc = "codellama:7b"
+            }
+        },
+        env = {
+          url = "http://localhost:11434", -- optional: default value is ollama url http://127.0.0.1:11434
+          chat_url = "/v1/chat/completions", -- optional: default value, override if different
+        },
+      })
+    end,
+  },
+    strategies = {
+      cmd = {
+          adapter = "ollama",
+                model = {
+                    desc = "codellama:7b"
+                },
+          opts = {
+              system_prompt = "",
+          },
+      },
+        chat = {
+          adapter = "ollama",
+            schema = {
+                model = {
+                    desc = "codellama:7b"
+                }
+            },
+          opts = {
+              system_prompt = ""
+          }
+        },
+        inline = {
+          adapter = "ollama",
+        },
+      },
+})
+]]

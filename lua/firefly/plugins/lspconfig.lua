@@ -52,18 +52,9 @@ local lsp_attach = function(client, buf)
         "<cmd>lua vim.diagnostic.goto_next()<CR>",
         { desc = "Quickfix Diagnostics", noremap = true, silent = false })
 
-    -- add a keybinding to show where a function is used in the project
-    --[[
-    vim.api.nvim_buf_set_keymap(buf, "n", "<M-s>",
-        "<cmd>Telescope lsp_references<CR>",
-        { desc = "Show Where Function Is Used", noremap = true, silent = true })
-        ]]--
-
     vim.api.nvim_buf_set_option(buf, "formatexpr", "v:lua.vim.lsp.formatexpr()")
 	vim.api.nvim_buf_set_option(buf, "omnifunc", "v:lua.vim.lsp.omnifunc")
 	vim.api.nvim_buf_set_option(buf, "tagfunc", "v:lua.vim.lsp.tagfunc")
-
-    print("attaching to buf")
 end
 
 local lsp_defaults = {
@@ -152,3 +143,58 @@ lspconfig.clangd.setup{
     capabilities = capabilities
 }
 
+-- Function to create a floating window
+local function open_floating_window()
+    -- Define the text to be displayed
+    local text = {
+        "Goto Definition        [1]",
+        "Goto Declaration       [2]",
+        "Show Signature help    [3]",
+        "Goto Implementation    [4]",
+        "Show References        [5]",
+        "Show Quickfix          [6]",
+    }
+
+    -- Create a new buffer
+    local buf = vim.api.nvim_create_buf(false, true) -- create new empty buffer
+
+    -- Set buffer lines
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, text)
+
+    -- Setup window dimensions
+    local width = #text[1]
+    local height = #text
+
+    -- Create window configuration
+    local opts = {
+        style = "minimal",
+        relative = "cursor",
+        width = width,
+        height = height,
+        row = 1,
+        col = 1,
+        border = "rounded"
+    }
+
+    local _ = vim.api.nvim_open_win(buf, true, opts)
+
+    -- Set key mapping to close the window
+    vim.api.nvim_buf_set_keymap(buf, 'n', '<M-;>', '<cmd>bd!<CR>', {nowait = true, noremap = true, silent = true})
+    vim.api.nvim_buf_set_keymap(buf, 'n', 'q', '<cmd>bd!<CR>', {nowait = true, noremap = true, silent = true})
+
+    vim.api.nvim_buf_set_keymap(buf, 'n', '1', '<cmd>bd!<CR><cmd>lua vim.lsp.buf.definition()<CR>',
+        {noremap = true, silent = true})
+    vim.api.nvim_buf_set_keymap(buf, 'n', '2', '<cmd>bd!<CR><cmd>lua vim.lsp.buf.declaration()<CR>',
+        {noremap = true, silent = true})
+    vim.api.nvim_buf_set_keymap(buf, 'n', '3', '<cmd>bd!<CR><cmd>lua vim.lsp.buf.signature_help()<CR>',
+        {noremap = true, silent = true})
+    vim.api.nvim_buf_set_keymap(buf, 'n', '4', '<cmd>bd!<CR><cmd>lua vim.lsp.buf.implementation()<CR>',
+        {noremap = true, silent = true})
+    vim.api.nvim_buf_set_keymap(buf, 'n', '5', '<cmd>bd!<CR><cmd>lua vim.lsp.buf.references()<CR>',
+        {noremap = true, silent = true})
+    vim.api.nvim_buf_set_keymap(buf, 'n', '6', '<cmd>bd!<CR><cmd>lua vim.lsp.buf.code_action()<CR>',
+        {noremap = true, silent = true})
+end
+
+-- Map the function to a key binding (e.g., <Leader>fw to open the floating window)
+vim.keymap.set('n', '<leader>m', function() open_floating_window() end, {noremap = true, silent = true})

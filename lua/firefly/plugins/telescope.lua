@@ -25,7 +25,7 @@ require('telescope').setup{
                  ['<M-;>'] = actions.close,
                  ['<Esc>'] = actions.close
             }
-        }
+        },
     },
     pickers = {
         find_files = {
@@ -33,6 +33,9 @@ require('telescope').setup{
         },
         live_grep = {
             theme = 'dropdown',
-        }
+        },
+        registers = {
+            theme = 'dropdown',
+        },
     },
 }
