@@ -27,7 +27,16 @@ if (os_name == 'Windows_NT') then
     vim.opt.shell = 'powershell.exe'
 end
 
--- for cmp plugin so the signcolumn does not open and close constantly
+-- for cmp plugin so the sign column does not open and close constantly
 vim.opt.signcolumn = 'yes'
 
 vim.opt.laststatus = 3
+
+vim.cmd("setlocal spell spelllang=en_us")
+
+--vim.g.netrw_keepdir = 0
+--vim.g.netrw_banner = 1
+--vim.g.netrw_winsize = 30
+--vim.g.netrw_browse_split = 4
+--vim.g.netrw_clipboard = 0
+--vim.g.netrw_fastbrowse = 2

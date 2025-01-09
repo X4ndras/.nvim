@@ -1,11 +1,17 @@
 local harpoon = require("harpoon")
 
--- REQUIRED
-harpoon:setup()
--- REQUIRED
+harpoon:setup({
+    settings = {
+            save_on_toggle = false,
+            sync_on_ui_close = false,
+
+            key = function()
+                return vim.loop.cwd()
+            end,
+        },
+})
 
 vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
---vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 
 vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
 vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
@@ -23,7 +29,9 @@ local function toggle_telescope(harpoon_files)
         table.insert(file_paths, item.value)
     end
 
-    require("telescope.pickers").new(require("telescope.themes").get_dropdown{}, {
+    require("telescope.pickers").new(
+        require("telescope.themes").get_dropdown{},
+    {
         prompt_title = "Harpoon",
         finder = require("telescope.finders").new_table({
             results = file_paths,
@@ -34,5 +42,8 @@ local function toggle_telescope(harpoon_files)
     }):find()
 end
 
-vim.keymap.set("n", "<leader>h", function() toggle_telescope(harpoon:list()) end,
-    { desc = "Open harpoon window" })
+vim.keymap.set("n", "<leader>hh", function() toggle_telescope(harpoon:list()) end,
+    { desc = "Open Harpoon window" })
+
+vim.keymap.set("n", "<leader>ch", function() harpoon:list():clear() end,
+    { desc = "Clear Harpoon list" })

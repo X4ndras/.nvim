@@ -24,8 +24,8 @@ local plugins = {
       dependencies = { "neovim/nvim-lspconfig" },
     },
 
-
     -- Custom Parameters (with defaults)
+    --[[
     {
         "David-Kunz/gen.nvim",
         opts = {
@@ -57,6 +57,7 @@ local plugins = {
             debug = false -- Prints errors and the command which is run.
         }
     },
+    ]]--
 
 
     {
@@ -133,9 +134,10 @@ local plugins = {
     -------------------------
 
     --'X4ndras/pristine-mint',
-    'X4ndras/firefly-theme',
+    -- 'X4ndras/firefly-theme',
 
-    --{ dir = '~/.config/nvim/.dev/firefly-theme' },
+    { dir = '~/.config/nvim/plugs/firefly-theme' },
+    { dir = '~/.config/nvim/plugs/bufopt' },
 }
 
 require('lazy').setup(plugins)

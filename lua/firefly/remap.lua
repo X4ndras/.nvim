@@ -39,6 +39,21 @@ vim.keymap.set({
     { noremap = true, silent = true
 })
 
+vim.keymap.set({
+        'n',
+        'i',
+        'v',
+        'c',
+        'o',
+        's',
+        't',
+        'x'
+    }, '<M-i>', '<CR>',
+    { noremap = true, silent = true
+})
+
+
+
 vim.keymap.set("n", "<leader>x", vim.cmd.Ex)
 
 vim.keymap.set('n', '<leader>i', function ()
@@ -65,13 +80,14 @@ vim.keymap.set('n', '<leader>d', function() vim.lsp.buf.type_definition() end)
 vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
 
 
--- moving line up down alt + jk
--- https://stackoverflow.com/questions/741814/move-entire-line-up-and-down-in-vim
 local function swap_lines(ln1, ln2)
-    local l1 = vim.fn.getline(ln1)
-    local l2 = vim.fn.getline(ln2)
-    vim.fn.setline(ln1, l2)
-    vim.fn.setline(ln2, l1)
+    local readonly = vim.bo.readonly
+    if not readonly then
+        local l1 = vim.fn.getline(ln1)
+        local l2 = vim.fn.getline(ln2)
+        vim.fn.setline(ln1, l2)
+        vim.fn.setline(ln2, l1)
+    end
 end
 
 local function swap_up()
@@ -93,5 +109,9 @@ local function swap_down()
     vim.cmd('exec ' .. ln .. ' + 1')
 end
 
-vim.keymap.set('n', '<C-k>', function() swap_up() end)
-vim.keymap.set('n', '<C-j>', function() swap_down() end)
+vim.keymap.set('n', '<C-k>', function()
+    swap_up()
+end)
+vim.keymap.set('n', '<C-j>', function()
+    swap_down()
+end)
