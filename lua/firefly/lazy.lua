@@ -96,7 +96,9 @@ local plugins = {
 
     -- code hilighting 
     {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
-    {'onsails/lspkind.nvim'},
+    'nvim-treesitter/nvim-treesitter-refactor',
+
+    'onsails/lspkind.nvim',
 
     -- color colorcode 
     'norcalli/nvim-colorizer.lua',

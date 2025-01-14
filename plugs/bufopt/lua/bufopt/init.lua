@@ -2,18 +2,45 @@ local filecmds = require("bufopt.filecmds")
 
 local M = {}
 
+-- Customize the rename symbol handler
+
+-- Etwas interessantes is heute passiert
 -- Define actions for normal buffers
+local function hover()
+   vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+       vim.lsp.handlers.hover, {
+           -- Use a sharp border with `FloatBorder` highlights
+           border = "rounded",
+           max_width = 50,
+           focusable = false,
+           focus = false,
+       }
+   )
+   vim.lsp.buf.hover()
+end
+
+vim.lsp.handlers["textDocument/codeAction"] = vim.lsp.with(
+   vim.lsp.handlers.code_action, {
+       -- Use a sharp border with `FloatBorder` highlights
+       border = "rounded",
+       max_width = 50,
+       focusable = false,
+       focus = false,
+   }
+)
+
 M.normal_actions = {
     { name = "Rename Symbol",       fn = vim.lsp.buf.rename,         bind = 'R' },
-    { name = "Goto Definition",     fn = vim.lsp.buf.definition,     bind = 'a' },
     { name = "Show Signature Help", fn = vim.lsp.buf.signature_help, bind = 's' },
-    { name = "Goto Declaration",    fn = vim.lsp.buf.declaration,    bind = 'd' },
-    { separator = true },
-    { name = "Goto Implementation", fn = vim.lsp.buf.implementation, bind = 'i' },
     { name = "Show References",     fn = vim.lsp.buf.references,     bind = 'r' },
     { name = "Show Quickfix",       fn = vim.lsp.buf.code_action,    bind = 'f' },
     { separator = true },
-    { name = "Hover Documentation", fn = vim.lsp.buf.hover,          bind = 'w' },
+    { name = "Goto Definition",     fn = vim.lsp.buf.definition,     bind = 'gd' },
+    { name = "Goto Declaration",    fn = vim.lsp.buf.declaration,    bind = 'gD' },
+    { name = "Goto Implementation", fn = vim.lsp.buf.implementation, bind = 'gi' },
+    { separator = true },
+    { name = "Format Document",     fn = vim.lsp.buf.format,         bind = '<leader>F' },
+    { name = "Hover Documentation", fn = hover,         bind = 'w' },
 }
 
 M.netrw_actions = {

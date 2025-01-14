@@ -75,7 +75,7 @@ lspconfig.util.default_config = vim.tbl_deep_extend(
 )
 
 require("lazy-lsp").setup {
-    excluded_servers = { "buf_ls", "ccls", "clangd", "sourcekit " },
+    excluded_servers = { "buf_ls", "ccls", "clangd", "sourcekit", "denols" },
     preferred_servers = {
         html = { "html", "ts_ls", "cssls" },
         python = { "pyright" },
@@ -135,7 +135,23 @@ require("lazy-lsp").setup {
                 }
 
             }
-        }
+        },
+        tsserver = {
+            settings = {
+                javascript = {
+                    format = {
+                        tabSize = 2,
+                        insertSpaces = true
+                    }
+                },
+                typescript = {
+                    format = {
+                        tabSize = 2,
+                        insertSpaces = true
+                    }
+                }
+            }
+        },
     },
 }
 

@@ -11,6 +11,11 @@ table.insert(vimgrep_arguments, "!**/.git/*")
 
 require('telescope').setup{
     defaults = {
+        border = true,
+        sorting_strategy = "ascending",
+        color_devicons = true,
+        prompt_prefix = "   ",
+        selection_caret = "󰄾 ",
         file_ignore_patterns = {
             'node_modules/*',
             'lsps/*',

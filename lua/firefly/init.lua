@@ -17,15 +17,10 @@ function m.setup()
     require('firefly.plugins.treesitter')
 
     require("firefly-theme").colorize()
-    vim.cmd('hi @punctuation.delimiter.c guifg=#FF0000')
+    --vim.cmd('hi @punctuation.delimiter.c guifg=#FF0000')
 
-    local bufoptts = require("bufopt")
-    vim.keymap.set('n', '<leader>m', bufoptts.open_floating_window, { noremap = true, silent = true })
-
-    vim.api.nvim_set_hl(0, "netrwMarkFile", { link = "Search" })
 
     -- require("firefly.plugins.bufopt")
-
     --local copilot = require("firefly.plugins.copilot")
     --vim.keymap.set("n", "<Leader>cc", function() copilot.complete() end)
     --vim.keymap.set("n", "<Leader>ca", function() copilot.accept_completion() end)

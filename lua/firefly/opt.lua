@@ -8,15 +8,17 @@ vim.opt.nu = true
 vim.opt.mouse = ''
 vim.opt.relativenumber = true
 
-vim.opt.timeoutlen = 350
+vim.opt.timeoutlen = 450
 
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.pumheight = 20
 vim.opt.showmode = false
-vim.opt.updatetime = 200
+vim.opt.updatetime = 100
+vim.opt.wrap = false
+vim.opt.colorcolumn = "80"
 
 
 vim.schedule(function ()
@@ -32,7 +34,12 @@ vim.opt.signcolumn = 'yes'
 
 vim.opt.laststatus = 3
 
-vim.cmd("setlocal spell spelllang=en_us")
+vim.api.nvim_create_autocmd('BufAdd', {
+    callback = function()
+        vim.opt.spell = true
+        vim.opt.spelllang = 'en_us,de'
+    end
+})
 
 --vim.g.netrw_keepdir = 0
 --vim.g.netrw_banner = 1

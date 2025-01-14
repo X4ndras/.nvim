@@ -46,6 +46,7 @@ local m = {}
 ---@field color9 string
 ---@field color10 string
 ---@field color11 string
+---@field visual string
 ---@field none string
 
 ---@type PaletteColors
@@ -63,6 +64,7 @@ m.palette = {
     color0 =    '#BD5644',
     color1 =    '#E0A3A6',
     color2 =    '#F1D6AB',
+    visual =    '#f8ead3',
     color3 =    '#888198',
 
     color4 =    '#A64B3A',
