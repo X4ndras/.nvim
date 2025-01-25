@@ -71,6 +71,7 @@ cmp.setup({
             name = 'luasnip',
             priority = 2
         },
+        { name = "ollama" },
         { name = 'nvim_lsp_signature_help' },
         { name = 'path' },
     }, {

@@ -2,7 +2,70 @@ local filecmds = require("bufopt.filecmds")
 
 local M = {}
 
--- Customize the rename symbol handler
+local function spell_correction()
+    -- Get the list of spelling suggestions
+    local suggestions = vim.fn.spellsuggest(vim.fn.expand('<cword>'))
+
+    if #suggestions == 0 then
+        vim.notify("No spelling suggestions found", vim.log.levels.WARN)
+        return
+    end
+
+    -- Create a table to hold the text lines for the floating window
+    local text = {}
+    for i, suggestion in ipairs(suggestions) do
+        table.insert(text, string.format("%d. %s", i, suggestion))
+    end
+
+    -- Calculate the width and height of the floating window
+    local width = 0
+    for _, line in ipairs(text) do
+       width = math.max(width, #line)
+    end
+    local height = #text
+
+    -- Define the options for the floating window
+    local opts = {
+        style = "minimal",
+        relative = "cursor",
+        width = width,
+        height = height,
+        row = 1,
+        col = 0,
+        border = "rounded",
+    }
+
+    -- Create the buffer and window
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, text)
+    local win = vim.api.nvim_open_win(buf, true, opts)
+
+    -- Make the buffer read-only and unmodifiable
+    vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+    vim.api.nvim_buf_set_option(buf, 'readonly', true)
+    vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
+    vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
+    vim.api.nvim_buf_set_option(buf, 'swapfile', false)
+    vim.api.nvim_buf_set_option(buf, 'filetype', 'SpellSuggest')
+
+    -- Set key mappings for selecting a suggestion
+    for i = 1, #suggestions do
+        vim.api.nvim_buf_set_keymap(buf, 'n', tostring(i), '', {
+            callback = function()
+                vim.api.nvim_win_close(win, true)
+                vim.api.nvim_command('normal! ciw' .. suggestions[i])
+            end,
+            noremap = true,
+            silent = true,
+        })
+    end
+
+    -- Set key mappings to close the window
+    local close_cmd = '<cmd>bd!<CR>'
+    vim.api.nvim_buf_set_keymap(buf, 'n', '<M-;>', close_cmd, { nowait = true, noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(buf, 'n', 'q', close_cmd, { nowait = true, noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(buf, 'n', '<esc>', close_cmd, { nowait = true, noremap = true, silent = true })
+end
 
 -- Etwas interessantes is heute passiert
 -- Define actions for normal buffers
@@ -41,6 +104,7 @@ M.normal_actions = {
     { separator = true },
     { name = "Format Document",     fn = vim.lsp.buf.format,         bind = '<leader>F' },
     { name = "Hover Documentation", fn = hover,         bind = 'w' },
+    { name = "Spell Correction",    fn = spell_correction,           bind = 'S' },
 }
 
 M.netrw_actions = {

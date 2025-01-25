@@ -3,6 +3,7 @@ local firefly = { }
 local theme = require("firefly-theme.theme")
 local palette= require("firefly-theme.palette")
 
+-- write a function to calculate factorial
 function firefly.colorize()
     --print("loading devel")
 
