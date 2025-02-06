@@ -1,60 +1,39 @@
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 local lspconfig = require('lspconfig')
 
-local lspsaga = require('lspsaga')
-lspsaga.setup({
-    code_action = {
-        keys = {
-            quit = '<M-;>',
-            exec = '<M-i>'
-        }
-    },
-    rename = {
-        keys = {
-            quit = '<M-;>',
-            exec = '<M-i>'
-        }
-    }
-})
+local function set_tab_size(bufnr, size)
+    vim.bo[bufnr].tabstop = size
+    vim.bo[bufnr].shiftwidth = size
+    vim.bo[bufnr].softtabstop = -1 -- Align with shiftwidth
+    vim.bo[bufnr].expandtab = true -- Use spaces
+end
 
----@diagnostic disable-next-line: unused-local
+local server_configs = {
+    go              = 2,
+    html            = 2,
+    css             = 2,
+    typescript      = 2,
+    javascript      = 2,
+    yaml            = 2,
+}
+
 local lsp_attach = function(client, buf)
-	-- Example maps, set your own with vim.api.nvim_buf_set_keymap(buf, "n", <lhs>, <rhs>, { desc = <desc> })
-	-- or a plugin like which-key.nvim
-	-- <lhs>        <rhs>                        <desc>
-	-- "K"          vim.lsp.buf.hover            "Hover Info"
-	-- "<leader>qf" vim.diagnostic.setqflist     "Quickfix Diagnostics"
-	-- "[d"         vim.diagnostic.goto_prev     "Previous Diagnostic"
-	-- "]d"         vim.diagnostic.goto_next     "Next Diagnostic"
-	-- "<leader>e"  vim.diagnostic.open_float    "Explain Diagnostic"
-	-- "<leader>ca" vim.lsp.buf.code_action      "Code Action"
-	-- "<leader>cr" vim.lsp.buf.rename           "Rename Symbol"
-	-- "<leader>fs" vim.lsp.buf.document_symbol  "Document Symbols"
-	-- "<leader>fS" vim.lsp.buf.workspace_symbol "Workspace Symbols"
-	-- "<leader>gq" vim.lsp.buf.formatting_sync  "Format File"
-	vim.api.nvim_buf_set_keymap(buf, "n", "<M-f>",
-        "<cmd>lua vim.diagnostic.setqflist()<CR>",
-        { desc = "Quickfix Diagnostics", noremap = true, silent = true })
-
-	vim.api.nvim_buf_set_keymap(buf, "n", "<M-r>",
-        "<cmd>Lspsaga rename .<CR>",
-        { desc = "Rename Symbol", noremap = true, silent = true })
-
-	vim.api.nvim_buf_set_keymap(buf, "n", "<M-a>",
-        "<cmd>Lspsaga code_action<CR>",
-        { desc = "Code Action", noremap = true, silent = true })
-
-	vim.api.nvim_buf_set_keymap(buf, "n", "[[",
+    vim.api.nvim_buf_set_keymap(buf, "n", "[[",
         "<cmd>lua vim.diagnostic.goto_prev()<CR>",
         { desc = "Quickfix Diagnostics", noremap = true, silent = false })
 
-	vim.api.nvim_buf_set_keymap(buf, "n", "]]",
+    vim.api.nvim_buf_set_keymap(buf, "n", "]]",
         "<cmd>lua vim.diagnostic.goto_next()<CR>",
         { desc = "Quickfix Diagnostics", noremap = true, silent = false })
 
     vim.api.nvim_buf_set_option(buf, "formatexpr", "v:lua.vim.lsp.formatexpr()")
-	vim.api.nvim_buf_set_option(buf, "omnifunc", "v:lua.vim.lsp.omnifunc")
-	vim.api.nvim_buf_set_option(buf, "tagfunc", "v:lua.vim.lsp.tagfunc")
+    vim.api.nvim_buf_set_option(buf, "omnifunc", "v:lua.vim.lsp.omnifunc")
+    vim.api.nvim_buf_set_option(buf, "tagfunc", "v:lua.vim.lsp.tagfunc")
+
+    local server_name = vim.bo[buf].filetype
+    local tab_size = server_configs[server_name] or 4
+    set_tab_size(buf, tab_size)
+    print("Setting tab size to " .. tab_size .. " for " .. server_name)
 end
 
 local lsp_defaults = {
@@ -85,7 +64,7 @@ require("lazy-lsp").setup {
     prefer_local = false,
     default_config = {
         flags = {
-              debounce_text_changes = 150,
+            debounce_text_changes = 150,
         },
         on_attach = lsp_attach,
         capabilities = capabilities
@@ -110,53 +89,20 @@ require("lazy-lsp").setup {
                 },
             }
         },
-        html = {
-            settings = {
-                format = {
-                    tabSize = 2,
-                    insertSpaces = true
-                }
-            }
-        },
         lua_ls = {
-          settings = {
-            Lua = {
-              diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = { "vim" },
-              },
-            },
-          },
-        },
-        pyright = {
             settings = {
-                python = {
-                    --pythonPath = vim.loop.cwd() .. "/.venv/Scripts/python.exe"
-                }
-
-            }
-        },
-        tsserver = {
-            settings = {
-                javascript = {
-                    format = {
-                        tabSize = 2,
-                        insertSpaces = true
-                    }
+                Lua = {
+                    diagnostics = {
+                        -- Get the language server to recognize the `vim` global
+                        globals = { "vim" },
+                    },
                 },
-                typescript = {
-                    format = {
-                        tabSize = 2,
-                        insertSpaces = true
-                    }
-                }
-            }
+            },
         },
-    },
+    }
 }
 
 -- Setup clangd manually
-lspconfig.clangd.setup{
+lspconfig.clangd.setup {
     capabilities = capabilities
 }
-

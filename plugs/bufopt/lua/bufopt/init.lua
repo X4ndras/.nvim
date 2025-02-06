@@ -1,95 +1,30 @@
-local filecmds = require("bufopt.filecmds")
-
 local M = {}
 
-local function spell_correction()
-    -- Get the list of spelling suggestions
-    local suggestions = vim.fn.spellsuggest(vim.fn.expand('<cword>'))
+local filecmds = require("bufopt.filecmds")
+M.spell = require("bufopt.spell")
 
-    if #suggestions == 0 then
-        vim.notify("No spelling suggestions found", vim.log.levels.WARN)
-        return
-    end
-
-    -- Create a table to hold the text lines for the floating window
-    local text = {}
-    for i, suggestion in ipairs(suggestions) do
-        table.insert(text, string.format("%d. %s", i, suggestion))
-    end
-
-    -- Calculate the width and height of the floating window
-    local width = 0
-    for _, line in ipairs(text) do
-       width = math.max(width, #line)
-    end
-    local height = #text
-
-    -- Define the options for the floating window
-    local opts = {
-        style = "minimal",
-        relative = "cursor",
-        width = width,
-        height = height,
-        row = 1,
-        col = 0,
-        border = "rounded",
-    }
-
-    -- Create the buffer and window
-    local buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, text)
-    local win = vim.api.nvim_open_win(buf, true, opts)
-
-    -- Make the buffer read-only and unmodifiable
-    vim.api.nvim_buf_set_option(buf, 'modifiable', false)
-    vim.api.nvim_buf_set_option(buf, 'readonly', true)
-    vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
-    vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
-    vim.api.nvim_buf_set_option(buf, 'swapfile', false)
-    vim.api.nvim_buf_set_option(buf, 'filetype', 'SpellSuggest')
-
-    -- Set key mappings for selecting a suggestion
-    for i = 1, #suggestions do
-        vim.api.nvim_buf_set_keymap(buf, 'n', tostring(i), '', {
-            callback = function()
-                vim.api.nvim_win_close(win, true)
-                vim.api.nvim_command('normal! ciw' .. suggestions[i])
-            end,
-            noremap = true,
-            silent = true,
-        })
-    end
-
-    -- Set key mappings to close the window
-    local close_cmd = '<cmd>bd!<CR>'
-    vim.api.nvim_buf_set_keymap(buf, 'n', '<M-;>', close_cmd, { nowait = true, noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(buf, 'n', 'q', close_cmd, { nowait = true, noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(buf, 'n', '<esc>', close_cmd, { nowait = true, noremap = true, silent = true })
-end
-
--- Etwas interessantes is heute passiert
 -- Define actions for normal buffers
 local function hover()
-   vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-       vim.lsp.handlers.hover, {
-           -- Use a sharp border with `FloatBorder` highlights
-           border = "rounded",
-           max_width = 50,
-           focusable = false,
-           focus = false,
-       }
-   )
-   vim.lsp.buf.hover()
+    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+        vim.lsp.handlers.hover, {
+            -- Use a sharp border with `FloatBorder` highlights
+            border = "rounded",
+            max_width = 50,
+            focusable = false,
+            focus = false,
+        }
+    )
+    vim.lsp.buf.hover()
 end
 
 vim.lsp.handlers["textDocument/codeAction"] = vim.lsp.with(
-   vim.lsp.handlers.code_action, {
-       -- Use a sharp border with `FloatBorder` highlights
-       border = "rounded",
-       max_width = 50,
-       focusable = false,
-       focus = false,
-   }
+    vim.lsp.handlers.code_action, {
+        -- Use a sharp border with `FloatBorder` highlights
+        border = "rounded",
+        max_width = 50,
+        focusable = false,
+        focus = false,
+    }
 )
 
 M.normal_actions = {
@@ -102,26 +37,27 @@ M.normal_actions = {
     { name = "Goto Declaration",    fn = vim.lsp.buf.declaration,    bind = 'gD' },
     { name = "Goto Implementation", fn = vim.lsp.buf.implementation, bind = 'gi' },
     { separator = true },
-    { name = "Format Document",     fn = vim.lsp.buf.format,         bind = '<leader>F' },
-    { name = "Hover Documentation", fn = hover,         bind = 'w' },
-    { name = "Spell Correction",    fn = spell_correction,           bind = 'S' },
+    { name = "Format Document",     fn = vim.lsp.buf.format,         bind = 'FF' },
+    { name = "Hover Documentation", fn = hover,                      bind = 'w' },
+    { separator = true },
+    { name = "Spelling",            fn = M.spell.spell_correction,     bind = 'S' },
 }
 
 M.netrw_actions = {
-    { name = "New Directory",       fn = filecmds.create_dir,       bind = 'd' },
-    { name = "New File",            fn = filecmds.create_file,      bind = 'n' },
-    { name = "Undo",                fn = filecmds.undo,             bind = 'u' },
+    { name = "New Directory", fn = filecmds.create_dir,  bind = 'd' },
+    { name = "New File",      fn = filecmds.create_file, bind = 'n' },
+    { name = "Undo",          fn = filecmds.undo,        bind = 'u' },
     { separator = true },
-    { name = "Open File",           fn = filecmds.open_file,        bind = 'o' },
-    { name = "Preview File",        fn = M.open_file,               bind = 's' },
-    { name = "Delete",              fn = filecmds.delete_path,      bind = 'D' },
-    { name = "Rename File",         fn = filecmds.rename_file,      bind = 'r' },
+    { name = "Open File",     fn = filecmds.open_file,   bind = 'o' },
+    { name = "Preview File",  fn = M.open_file,          bind = 's' },
+    { name = "Delete",        fn = filecmds.delete_path, bind = 'D' },
+    { name = "Rename File",   fn = filecmds.rename_file, bind = 'R' },
     { separator = true },
-    { name = "Copy File",           fn = filecmds.copy_file,        bind = 'c' },
-    { name = "Cut File",            fn = filecmds.cut_file,         bind = 'x' },
-    { name = "Paste File",          fn = filecmds.paste_file,       bind = 'p' },
-    { separator = true },
-    { name = "Open in Terminal",    fn = M.open_file,               bind = 't' },
+    { name = "Copy File",     fn = filecmds.copy_file,   bind = 'c' },
+    { name = "Cut File",      fn = filecmds.cut_file,    bind = 'x' },
+    { name = "Paste File",    fn = filecmds.paste_file,  bind = 'p' },
+    --{ separator = true },
+    --{ name = "Open in Terminal",    fn = M.open_file,               bind = 't' },
 }
 
 -- Function to create a centered separator
@@ -260,7 +196,7 @@ function M.open_floating_window()
         else
             local action_bind_format = action.bind_format or bind_format
             local bind_display = string.format(action_bind_format, action.bind)
-            local line = processed_text[line_nr + 1]  -- Lua indexing starts at 1
+            local line = processed_text[line_nr + 1] -- Lua indexing starts at 1
 
             -- Calculate positions for highlighting
             local name_start = 0
@@ -288,6 +224,4 @@ function M.open_floating_window()
     end
 end
 
-
 return M
-

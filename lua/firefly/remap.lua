@@ -13,6 +13,7 @@ vim.keymap.set("n", "<M-L>", "<C-w>L")
 vim.keymap.set("n", "<leader>wv", "<C-w>v")
 vim.keymap.set("n", "<leader>ws", "<C-w>s")
 vim.keymap.set("n", "<leader>wc", "<C-w>c")
+vim.keymap.set("n", "<leader>wq", "<C-w>q")
 
 -- fluent scrolling
 local cinnamon = require("cinnamon")

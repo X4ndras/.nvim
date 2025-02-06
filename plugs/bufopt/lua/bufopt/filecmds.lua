@@ -1,4 +1,5 @@
 local M = {}
+local MAX_UNDO_STACK = 10
 
 M.clipboard = {
     files = {},
@@ -44,17 +45,44 @@ local Action = {
 ---@param action UndoAction
 local function push_undo_stack(action)
     table.insert(M.undo_stack, action)
+    if #M.undo_stack > MAX_UNDO_STACK then
+        table.remove(M.undo_stack, 1)
+    end
 end
+
 
 -- Function to refresh netrw
 local function refresh_netrw()
-    local cursor = vim.api.nvim_win_get_cursor(0)
+    local current_win = vim.api.nvim_get_current_win()
+    local cursor = vim.api.nvim_win_get_cursor(current_win)
+
+    -- Store original buffer for reference
+    local original_buf = vim.api.nvim_win_get_buf(current_win)
+
     if vim.bo.filetype == 'netrw' then
-        local dir = vim.b.netrw_curdir
-        vim.cmd('bdelete')
-        vim.cmd('edit ' .. dir)
+        --vim.cmd('silent! normal j')
+        vim.cmd('silent! e .')
+        vim.cmd('redraw')
     end
-    vim.api.nvim_win_set_cursor(0, cursor)
+
+    -- attempt cursor restoration if:
+    if vim.api.nvim_win_is_valid(current_win) then
+        local current_buf = vim.api.nvim_win_get_buf(current_win)
+
+        if current_buf == original_buf then
+            local line_count = vim.api.nvim_buf_line_count(current_buf)
+
+            -- Adjust for 1-based vs 0-based indexing
+            local max_row = math.max(line_count - 1, 0)
+            local target_row = math.min(cursor[1] - 1, max_row)
+            local target_col = math.min(cursor[2], vim.fn.col({target_row + 1, '$'}) - 1)
+
+            pcall(vim.api.nvim_win_set_cursor, current_win, {
+                target_row + 1,  -- Convert back to 1-based row
+                target_col
+            })
+        end
+    end
 end
 
 -- Function to open a file
@@ -179,11 +207,33 @@ function M.paste_file()
                 push_undo_stack({
                     action = Action.move,
                     path = destpath,
-                    old_path = filename,
+                    old_path = filepath,
                 })
             end
         elseif M.clipboard.action == 'copy' then
-            -- Use uv to copy the file
+            -- Check if destination exists
+            local exists = uv.fs_stat(destpath) ~= nil
+
+            -- Interactive prompt for conflicts
+            if exists then
+                local choice = vim.fn.input(string.format(
+                    "'%s' exists. [R]ename, [O]verwrite, [C]ancel? ",
+                    filename
+                ), "")
+
+                choice = choice:lower()
+                if choice == "r" then
+                    local newname = vim.fn.input("New name: ", filename)
+                    if not newname or newname == "" then return end
+                    destpath = dir .. '/' .. newname
+                elseif choice == "o" then
+                    uv.fs_unlink(destpath)  -- Remove existing file
+                else
+                    vim.notify("Paste cancelled", vim.log.levels.INFO)
+                    return
+                end
+            end
+
             local success, err = uv.fs_copyfile(filepath, destpath)
             if not success then
                 vim.notify('Copy failed: ' .. err, vim.log.levels.ERROR)
@@ -455,7 +505,7 @@ end
 -- Function to restore a deleted directory
 local function restore_dir(dirpath, content)
     local success, err = uv.fs_mkdir(dirpath, 493)
-    if not success then
+    if not success and err ~= "EEXIST" then
         return false, 'Could not restore directory: ' .. err
     end
 

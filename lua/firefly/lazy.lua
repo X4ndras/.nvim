@@ -24,6 +24,7 @@ local plugins = {
       dependencies = { "neovim/nvim-lspconfig" },
     },
 
+    --[[
     {
       "olimorris/codecompanion.nvim",
       dependencies = {
@@ -32,13 +33,29 @@ local plugins = {
       },
       config = true
     },
+    ]]
 
+    {
+      "yetone/avante.nvim",
+      event = "VeryLazy",
+      lazy = false,
+      version = false,
+      build = "make",
+      dependencies = {
+        "stevearc/dressing.nvim",
+        "nvim-lua/plenary.nvim",
+        "MunifTanjim/nui.nvim",
+      },
+    },
+
+    --[[
     {
        'nvimdev/lspsaga.nvim',
        dependencies = {
         'nvim-treesitter/nvim-treesitter',
        }
     },
+    --]]
 
     -- Snippets 
     { 'L3MON4D3/LuaSnip', version = "v2.3.0" },
