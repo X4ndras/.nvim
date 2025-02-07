@@ -33,7 +33,7 @@ local lsp_attach = function(client, buf)
     local server_name = vim.bo[buf].filetype
     local tab_size = server_configs[server_name] or 4
     set_tab_size(buf, tab_size)
-    print("Setting tab size to " .. tab_size .. " for " .. server_name)
+    --print("Setting tab size to " .. tab_size .. " for " .. server_name)
 end
 
 local lsp_defaults = {
