@@ -17,6 +17,10 @@ local function hover()
     vim.lsp.buf.hover()
 end
 
+--[[
+-- managed by Telescope
+-- but left in in case i want to make it 
+-- work without Telescope
 vim.lsp.handlers["textDocument/codeAction"] = vim.lsp.with(
     vim.lsp.handlers.code_action, {
         -- Use a sharp border with `FloatBorder` highlights
@@ -26,6 +30,7 @@ vim.lsp.handlers["textDocument/codeAction"] = vim.lsp.with(
         focus = false,
     }
 )
+]]--
 
 M.normal_actions = {
     { name = "Rename Symbol",       fn = vim.lsp.buf.rename,         bind = 'R' },
@@ -56,8 +61,6 @@ M.netrw_actions = {
     { name = "Copy File",     fn = filecmds.copy_file,   bind = 'c' },
     { name = "Cut File",      fn = filecmds.cut_file,    bind = 'x' },
     { name = "Paste File",    fn = filecmds.paste_file,  bind = 'p' },
-    --{ separator = true },
-    --{ name = "Open in Terminal",    fn = M.open_file,               bind = 't' },
 }
 
 -- Function to create a centered separator

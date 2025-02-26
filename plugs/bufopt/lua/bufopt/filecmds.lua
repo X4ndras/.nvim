@@ -50,7 +50,6 @@ local function push_undo_stack(action)
     end
 end
 
-
 -- Function to refresh netrw
 local function refresh_netrw()
     local current_win = vim.api.nvim_get_current_win()

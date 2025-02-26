@@ -107,9 +107,28 @@ function M.spell_correction()
 
     -- Close mappings for suggestions window
     local close_cmd = '<cmd>lua require("bufopt").spell.close_windows()<CR>'
-    vim.api.nvim_buf_set_keymap(suggestions_buf, 'n', '<M-;>', close_cmd, { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(suggestions_buf, 'n', 'q', close_cmd, { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(suggestions_buf, 'n', '<esc>', close_cmd, { noremap = true, silent = true })
+    local settings = { noremap = true, silent = true }
+
+    local function apply_under_cursor()
+        local row = vim.api.nvim_win_get_cursor(suggestions_win)[1]
+        M.close_windows()
+        vim.api.nvim_command('normal! ciw' .. suggestions[row])
+    end
+
+    vim.api.nvim_buf_set_keymap(suggestions_buf, 'n', '<M-;>', close_cmd, settings)
+    vim.api.nvim_buf_set_keymap(suggestions_buf, 'n', 'q', close_cmd, settings)
+    vim.api.nvim_buf_set_keymap(suggestions_buf, 'n', '<esc>', close_cmd, settings)
+
+    vim.api.nvim_buf_set_keymap(suggestions_buf, 'n', '<CR>', '', {
+        callback = apply_under_cursor,
+        noremap = true,
+        silent = true
+    })
+    vim.api.nvim_buf_set_keymap(suggestions_buf, 'n', '<M-i>', '', {
+        callback = apply_under_cursor,
+        noremap = true,
+        silent = true
+    })
 
     -- Set highlights for actions window
     vim.api.nvim_buf_add_highlight(actions_buf, -1, 'Title', 0, 0, -1)

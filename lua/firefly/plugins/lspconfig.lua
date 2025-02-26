@@ -31,7 +31,7 @@ local lsp_attach = function(client, buf)
     vim.api.nvim_buf_set_option(buf, "tagfunc", "v:lua.vim.lsp.tagfunc")
 
     local server_name = vim.bo[buf].filetype
-    local tab_size = server_configs[server_name] or 4
+    local tab_size = server_configs[server_name] or 2
     set_tab_size(buf, tab_size)
     --print("Setting tab size to " .. tab_size .. " for " .. server_name)
 end
