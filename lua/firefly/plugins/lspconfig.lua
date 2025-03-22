@@ -9,12 +9,7 @@ local function set_tab_size(bufnr, size)
 end
 
 local server_configs = {
-    go              = 2,
-    html            = 2,
-    css             = 2,
-    typescript      = 2,
-    javascript      = 2,
-    yaml            = 2,
+    rust            = 4,
 }
 
 local lsp_attach = function(client, buf)
@@ -33,7 +28,6 @@ local lsp_attach = function(client, buf)
     local server_name = vim.bo[buf].filetype
     local tab_size = server_configs[server_name] or 2
     set_tab_size(buf, tab_size)
-    --print("Setting tab size to " .. tab_size .. " for " .. server_name)
 end
 
 local lsp_defaults = {
@@ -62,32 +56,17 @@ require("lazy-lsp").setup {
         javascript = { "ts_ls" }
     },
     prefer_local = false,
-    default_config = {
-        flags = {
-            debounce_text_changes = 150,
-        },
-        on_attach = lsp_attach,
-        capabilities = capabilities
-    },
+    default_config = lsp_defaults,
     configs = {
         rust_analyzer = {
             settings = {
                 checkOnSave = {
                     command = "clippy",
                 },
-                lens = {
-                    enable = true,
-                    references = {
-                        adt = { enable = true },
-                        enumVariant = { enable = true },
-                        method = { enable = true },
-                        trait = { enable = true },
-                    },
-                },
                 procMacro = {
                     enable = true
                 },
-            }
+            },
         },
         lua_ls = {
             settings = {
@@ -103,6 +82,7 @@ require("lazy-lsp").setup {
 }
 
 -- Setup clangd manually
-lspconfig.clangd.setup {
-    capabilities = capabilities
-}
+--lspconfig.clangd.setup {
+--    capabilities = capabilities,
+--    initializationOptions = lsp_defaults.initializationOptions
+--}

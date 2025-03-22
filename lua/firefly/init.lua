@@ -17,6 +17,7 @@ function m.setup()
     require('firefly.plugins.treesitter')
 
     require("firefly-theme").colorize()
+    --vim.api.nvim_command("Colorscheme one-dark")
 
     require("firefly.plugins.ai")
 
@@ -28,4 +29,4 @@ function m.setup()
     --vim.keymap.set("n", "<Leader>cd", function() copilot.discard_completion() end)
 end
 
-return m  
+return m

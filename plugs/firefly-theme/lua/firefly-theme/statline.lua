@@ -10,16 +10,16 @@ local function count_diagnostics(type, count)
 end
 
 local function diagnostics()
-    local warnings = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN });
-    local errors = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR });
-    local infos = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO });
-    local hints = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT });
+    local warnings  = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN });
+    local errors    = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR });
+    local infos     = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO });
+    local hints     = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT });
 
     local types = {
-        ['errors'] = {type = errors, count = 0},
-        ['warnings'] = {type = warnings, count = 0},
-        ['infos'] = {type = infos, count = 0},
-        ['hints'] = {type = hints, count = 0}
+        ['errors']      = {type = errors, count = 0},
+        ['warnings']    = {type = warnings, count = 0},
+        ['infos']       = {type = infos, count = 0},
+        ['hints']       = {type = hints, count = 0}
     }
 
     for _, type_count in pairs(types) do
@@ -43,10 +43,10 @@ local function set_hl()
         { fg = modes.get_modes().color.fg, bg = modes.get_modes().color.bg })
 
     vim.api.nvim_set_hl(0, 'isle_ends',
-        { fg = modes.get_modes().color.bg , bg = palette.base })
+        { fg = modes.get_modes().color.bg , bg = palette.bg0 })
 
     vim.api.nvim_set_hl(0, 'dgn',
-        { fg = palette.surface, bg = palette.base })
+        { fg = palette.bg1, bg = palette.bg0 })
 end
 
 local function set_statusline()

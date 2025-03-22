@@ -67,17 +67,16 @@ vim.keymap.set('n', '<leader>i', function ()
        }
    )
 end)
-vim.keymap.set('n', '<leader>q', function ()
-end)
+--vim.keymap.set('n', '<leader>q', function () end)
 
 
 local bufoptts = require("bufopt")
 vim.keymap.set('n', '<leader>m', bufoptts.open_floating_window, { noremap = true, silent = true })
 
-vim.keymap.set('n', '<M-y>', function() vim.api.nvim_command('UndotreeToggle') end)
+vim.keymap.set('n', '<M-u>', function() vim.api.nvim_command('UndotreeToggle') end)
 vim.keymap.set('n', '<leader><leader>', function() vim.cmd('Telescope find_files') end)
 vim.keymap.set('n', '<leader>s', function() vim.cmd('Telescope live_grep') end)
-vim.keymap.set('n', '<leader>d', function() vim.lsp.buf.type_definition() end)
+--vim.keymap.set('n', '<leader>d', function() vim.lsp.buf.type_definition() end)
 vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
 
 

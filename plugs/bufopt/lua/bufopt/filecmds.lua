@@ -100,6 +100,21 @@ function M.open_file()
     vim.cmd('edit ' .. vim.fn.fnameescape(filepath))
 end
 
+function M.preview_file()
+    local dir = get_current_directory()
+    local filename = vim.fn.expand('<cfile>')
+    if filename == '' then
+        vim.notify('No file selected', vim.log.levels.ERROR)
+        return
+    end
+    local filepath = uv.fs_realpath(dir .. '/' .. filename)
+    if not filepath then
+        vim.notify('File not found: ' .. filename, vim.log.levels.ERROR)
+        return
+    end
+    vim.cmd('pedit ' .. vim.fn.fnameescape(filepath))
+end
+
 -- Function to rename a file
 function M.rename_file()
     local dir = get_current_directory()

@@ -3,10 +3,7 @@ local firefly = { }
 local theme = require("firefly-theme.theme")
 local palette= require("firefly-theme.palette")
 
--- write a function to calculate factorial
 function firefly.colorize()
-    --print("loading devel")
-
     -- read themes folder
     local themes_dir = vim.fn.stdpath("config") .. "/themes"
 
@@ -43,6 +40,8 @@ function firefly.colorize()
             end)
             if success then
                 theme.load()
+                -- Save last used theme
+                vim.g.firefly_last_theme = theme_name
             else
                 print("Error loading theme from json: " .. theme_name)
             end
@@ -58,6 +57,7 @@ function firefly.colorize()
       end
     })
 
+    -- Load the theme
     theme.load()
 end
 

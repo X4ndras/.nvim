@@ -2,51 +2,57 @@ local modes = {}
 
 local function set_modes()
     local palette = require('firefly-theme.palette')
+    local mappings = palette.get_mappings()
     palette = palette.get()
 
+    local normal_bg = palette[mappings.keyword]
+    local visual_bg = palette[mappings.fn]
+    local insert_bg = palette[mappings.class]
+    local insert_fg = palette.bg1
+
     return {
-        ['n']      = {mode = 'NM',  bg = palette.color2, fg = palette.surface},
-        ['no']     = {mode = 'O-P', bg = palette.color2, fg = palette.surface},
-        ['nov']    = {mode = 'O-P', bg = palette.color2, fg = palette.surface},
-        ['noV']    = {mode = 'O-P', bg = palette.color2, fg = palette.surface},
-        ['no\22']  = {mode = 'O-P', bg = palette.color2, fg = palette.surface},
-        ['niI']    = {mode = 'NM',  bg = palette.color2, fg = palette.surface},
-        ['niR']    = {mode = 'NM',  bg = palette.color2, fg = palette.surface},
-        ['niV']    = {mode = 'NM',  bg = palette.color2, fg = palette.surface},
-        ['nt']     = {mode = 'NM',  bg = palette.color2, fg = palette.surface},
-        ['ntT']    = {mode = 'NM',  bg = palette.color2, fg = palette.surface},
+        ['n']      = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
+        ['no']     = {mode = 'O-P', bg = normal_bg, fg = palette.bg1},
+        ['nov']    = {mode = 'O-P', bg = normal_bg, fg = palette.bg1},
+        ['noV']    = {mode = 'O-P', bg = normal_bg, fg = palette.bg1},
+        ['no\22']  = {mode = 'O-P', bg = normal_bg, fg = palette.bg1},
+        ['niI']    = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
+        ['niR']    = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
+        ['niV']    = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
+        ['nt']     = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
+        ['ntT']    = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
 
-        ['v']      = {mode = 'VM',  bg = palette.color3, fg = palette.surface},
-        ['vs']     = {mode = 'VM',  bg = palette.color3, fg = palette.surface},
-        ['V']      = {mode = 'V-L', bg = palette.color3, fg = palette.surface},
-        ['Vs']     = {mode = 'V-L', bg = palette.color3, fg = palette.surface},
-        ['\22']    = {mode = 'V-B', bg = palette.color3, fg = palette.surface},
-        ['\22s']   = {mode = 'V-B', bg = palette.color3, fg = palette.surface},
+        ['v']      = {mode = 'VM',  bg = visual_bg, fg = palette.bg1},
+        ['vs']     = {mode = 'VM',  bg = visual_bg, fg = palette.bg1},
+        ['V']      = {mode = 'V-L', bg = visual_bg, fg = palette.bg1},
+        ['Vs']     = {mode = 'V-L', bg = visual_bg, fg = palette.bg1},
+        ['\22']    = {mode = 'V-B', bg = visual_bg, fg = palette.bg1},
+        ['\22s']   = {mode = 'V-B', bg = visual_bg, fg = palette.bg1},
 
-        ['s']      = {mode = 'SLC', bg = palette.base, fg = palette.surface},
-        ['S']      = {mode = 'S-L', bg = palette.base, fg = palette.surface},
-        ['\19']    = {mode = 'S-B', bg = palette.base, fg = palette.surface},
+        ['s']      = {mode = 'SLC', bg = palette.bg0, fg = palette.bg1},
+        ['S']      = {mode = 'S-L', bg = palette.bg0, fg = palette.bg1},
+        ['\19']    = {mode = 'S-B', bg = palette.bg0, fg = palette.bg1},
 
-        ['i']      = {mode = 'IM', bg = palette.color1, fg = palette.text},
-        ['ic']     = {mode = 'IM', bg = palette.color1, fg = palette.text},
-        ['ix']     = {mode = 'IM', bg = palette.color1, fg = palette.text},
+        ['i']      = {mode = 'IM', bg = insert_bg, fg = insert_fg},
+        ['ic']     = {mode = 'IM', bg = insert_bg, fg = insert_fg},
+        ['ix']     = {mode = 'IM', bg = insert_bg, fg = insert_fg},
 
-        ['R']      = {mode = 'RM',  bg = palette.color0, fg = palette.text},
-        ['Rc']     = {mode = 'RM',  bg = palette.color0, fg = palette.text},
-        ['Rx']     = {mode = 'RM',  bg = palette.color0, fg = palette.text},
-        ['Rv']     = {mode = 'V-R', bg = palette.color0, fg = palette.text},
-        ['Rvc']    = {mode = 'V-R', bg = palette.color0, fg = palette.text},
-        ['Rvx']    = {mode = 'V-R', bg = palette.color0, fg = palette.text},
+        ['R']      = {mode = 'RM',  bg = palette.color1, fg = palette.bg1},
+        ['Rc']     = {mode = 'RM',  bg = palette.color1, fg = palette.bg1},
+        ['Rx']     = {mode = 'RM',  bg = palette.color1, fg = palette.bg1},
+        ['Rv']     = {mode = 'V-R', bg = palette.color1, fg = palette.bg1},
+        ['Rvc']    = {mode = 'V-R', bg = palette.color1, fg = palette.bg1},
+        ['Rvx']    = {mode = 'V-R', bg = palette.color1, fg = palette.bg1},
 
-        ['c']      = {mode = ' ',  bg = palette.surface, fg = palette.text},
-        ['cv']     = {mode = 'EX',  bg = palette.surface, fg = palette.text},
-        ['ce']     = {mode = 'EX',  bg = palette.surface, fg = palette.text},
-        ['!']      = {mode = '',   bg = palette.surface, fg = palette.text},
-        ['t']      = {mode = '',   bg = palette.surface, fg = palette.text},
+        ['c']      = {mode = ' ',  bg = palette.bg1, fg = palette.color15},
+        ['cv']     = {mode = 'EX',  bg = palette.bg1, fg = palette.color15},
+        ['ce']     = {mode = 'EX',  bg = palette.bg1, fg = palette.color15},
+        ['!']      = {mode = '',   bg = palette.bg1, fg = palette.color15},
+        ['t']      = {mode = '',   bg = palette.bg1, fg = palette.color15},
 
-        ['r']      = {mode = 'RP',      bg = palette.base, fg = palette.surface},
-        ['rm']     = {mode = 'MORE',    bg = palette.base, fg = palette.surface},
-        ['r?']     = {mode = 'CONFIRM', bg = palette.base, fg = palette.surface},
+        ['r']      = {mode = 'RP',      bg = palette.bg0, fg = palette.bg1},
+        ['rm']     = {mode = 'MORE',    bg = palette.bg0, fg = palette.bg1},
+        ['r?']     = {mode = 'CONFIRM', bg = palette.bg0, fg = palette.bg1},
     }
 end
 
