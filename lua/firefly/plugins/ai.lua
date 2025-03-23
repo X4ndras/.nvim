@@ -168,7 +168,7 @@ require('avante').setup({
   windows = {
     width = 32,
     sidebar_header = {
-      enabled = false,
+      enabled = true,
       align = "center",
       rounded = true
     },
