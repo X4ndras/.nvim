@@ -97,8 +97,6 @@ local plugins = {
   {
     "declancm/cinnamon.nvim",
     version = "*",
-    opts = {
-    },
   },
 
   -- Undo tree
@@ -108,8 +106,11 @@ local plugins = {
   {
     "declancm/cinnamon.nvim",
     version = "*",
-    opts = {
-    },
+  },
+
+  {
+      'MeanderingProgrammer/render-markdown.nvim',
+      dependencies = { 'nvim-treesitter/nvim-treesitter' },
   },
 
   -- game
