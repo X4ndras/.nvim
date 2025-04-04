@@ -17,21 +17,6 @@ local function hover()
   vim.lsp.buf.hover()
 end
 
---[[
--- managed by Telescope
--- but left in in case i want to make it
--- work without Telescope
-vim.lsp.handlers["textDocument/codeAction"] = vim.lsp.with(
-    vim.lsp.handlers.code_action, {
-        -- Use a sharp border with `FloatBorder` highlights
-        border = "rounded",
-        max_width = 50,
-        focusable = false,
-        focus = false,
-    }
-)
-]] --
-
 M.normal_actions = {
   { name = "Rename Symbol",       fn = vim.lsp.buf.rename,         bind = 'R' },
   { name = "Show Signature Help", fn = vim.lsp.buf.signature_help, bind = 's' },
