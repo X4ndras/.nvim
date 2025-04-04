@@ -183,13 +183,13 @@ function M.open_floating_window()
       vim.api.nvim_buf_add_highlight(buf, -1, 'FloatSeparator', line_nr, 0, -1)
     else
       local action_bind_format = action.bind_format or bind_format
-      local bind_display = string.format(action_bind_format, action.bind)
+      local bind_display = #string.format(action_bind_format, action.bind) + 1
       local line = processed_text[line_nr + 1]       -- Lua indexing starts at 1
 
       -- Calculate positions for highlighting
       local name_start = 0
       local name_end = #action.name
-      local bind_start = #line - #bind_display
+      local bind_start = #line - bind_display
       local bind_end = #line
 
       -- Apply highlights
