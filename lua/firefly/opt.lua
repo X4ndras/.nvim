@@ -40,10 +40,3 @@ vim.api.nvim_create_autocmd('BufAdd', {
         vim.opt.spelllang = 'en_us,de'
     end
 })
-
---vim.g.netrw_keepdir = 0
---vim.g.netrw_banner = 1
---vim.g.netrw_winsize = 30
---vim.g.netrw_browse_split = 4
---vim.g.netrw_clipboard = 0
---vim.g.netrw_fastbrowse = 2
