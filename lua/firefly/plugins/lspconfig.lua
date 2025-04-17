@@ -86,3 +86,12 @@ require("lazy-lsp").setup {
 --    capabilities = capabilities,
 --    initializationOptions = lsp_defaults.initializationOptions
 --}
+--vim.lsp.config('clangd', {
+--  -- Server-specific settings. See `:help lsp-quickstart`
+--  settings = {
+--    ['clangd'] = {
+--      capabilities = capabilities,
+--      initializationOptions = lsp_defaults.initializationOptions
+--    },
+--  },
+--})
