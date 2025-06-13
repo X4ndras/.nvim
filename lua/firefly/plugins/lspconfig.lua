@@ -48,12 +48,13 @@ lspconfig.util.default_config = vim.tbl_deep_extend(
 )
 
 require("lazy-lsp").setup {
-  excluded_servers = { "buf_ls", "ccls", "clangd", "sourcekit", "denols" },
+  excluded_servers = { "buf_ls", "ccls", "clangd", "sourcekit", "denols", "intelliphense" },
   preferred_servers = {
     html = { "html", "ts_ls", "cssls" },
     python = { "pyright" },
     lua = { "lua_ls" },
-    javascript = { "ts_ls" }
+    javascript = { "ts_ls" },
+    php = { "phpactor" },
   },
   prefer_local = false,
   default_config = lsp_defaults,

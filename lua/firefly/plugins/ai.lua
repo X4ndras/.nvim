@@ -112,46 +112,9 @@ end
 
 require('avante').setup({
   --provider = "openai",
-  provider = "claude-3.7",
+  --provider = "copilot/claude-3.7",
   --auto_suggestions_provider = "",
-  vendors = {
-    ["deepseek-coder"] = {
-      __inherited_from = "openai",
-      api_key_name = "DEEPSEEK_API_KEY",
-      endpoint = "https://api.deepseek.com",
-      model = "deepseek-coder",
-      temperature = 0,
-    },
-    ["deepseek-reasoner"] = {
-      __inherited_from = "openai",
-      api_key_name = "DEEPSEEK_API_KEY",
-      endpoint = "https://api.deepseek.com",
-      temperature = 0,
-      model = "deepseek-reasoner",
-      disable_tools = true
-    },
-    ["deepseek-chat"] = {
-      __inherited_from = "openai",
-      api_key_name = "DEEPSEEK_API_KEY",
-      endpoint = "https://api.deepseek.com",
-      model = "deepseek-chat",
-    },
-    ["claude-3.7"] = {
-      __inherited_from = "copilot",
-      display_name = "copilot/claude-3.7",
-      model = "claude-3.7-sonnet",
-    },
-    ["claude-3.5"] = {
-      __inherited_from = "copilot",
-      display_name = "copilot/claude-3.5",
-      model = "claude-3.5-sonnet",
-    },
-    ["gpt-o3-mini"] = {
-      __inherited_from = "copilot",
-      display_name = "copilot/gpt-o3-mini",
-      model = "gpt-o3-mini",
-    },
-  },
+  --providers = {},
   chat_history = {
     enabled = true,
     max_history = 50,
