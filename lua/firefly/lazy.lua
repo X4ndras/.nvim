@@ -115,7 +115,7 @@ local plugins = {
 
   -- game
   -- 'ThePrimeagen/vim-be-good',
-
+  'tidalcycles/vim-tidal',
   -------------------------
   ------ Own Plugins ------
   -------------------------
@@ -125,6 +125,7 @@ local plugins = {
 
   { dir = '~/.config/nvim/plugs/firefly-theme' },
   { dir = '~/.config/nvim/plugs/bufopt' },
+
 }
 
 require('lazy').setup(plugins)

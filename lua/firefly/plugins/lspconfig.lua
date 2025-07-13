@@ -64,9 +64,9 @@ require("lazy-lsp").setup {
         checkOnSave = {
           command = "clippy",
         },
-        procMacro = {
-          enable = true
-        },
+        --procMacro = {
+        --  enable = true
+        --},
       },
     },
     lua_ls = {
