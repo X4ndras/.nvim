@@ -10,6 +10,7 @@ end
 
 local server_configs = {
   rust = 4,
+  python = 4,
 }
 
 local lsp_attach = function(client, buf)
@@ -39,6 +40,10 @@ local lsp_defaults = {
   on_attach = lsp_attach,
 }
 
+lsp_defaults.general = {
+  positionEncodings = { "utf-8", "utf-16" }
+}
+
 lsp_defaults.capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 lspconfig.util.default_config = vim.tbl_deep_extend(
@@ -48,7 +53,7 @@ lspconfig.util.default_config = vim.tbl_deep_extend(
 )
 
 require("lazy-lsp").setup {
-  excluded_servers = { "buf_ls", "ccls", "clangd", "sourcekit", "denols", "intelliphense" },
+  excluded_servers = { "buf_ls", "ccls", "sourcekit", "denols", "intelliphense" },
   preferred_servers = {
     html = { "html", "ts_ls", "cssls" },
     python = { "pyright" },
@@ -67,6 +72,16 @@ require("lazy-lsp").setup {
         --procMacro = {
         --  enable = true
         --},
+      },
+    },
+    clangd = {
+      cmd = {
+        "clangd",
+        "--background-index",
+        "--clang-tidy",
+        "--header-insertion=never",
+        "--completion-style=detailed",
+        "--fallback-style=llvm",
       },
     },
     lua_ls = {
