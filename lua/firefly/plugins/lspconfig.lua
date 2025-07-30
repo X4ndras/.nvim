@@ -10,10 +10,11 @@ end
 
 local server_configs = {
   rust = 4,
-  python = 4,
+  python = 4
 }
 
-local lsp_attach = function(client, buf)
+--- client, buf
+local lsp_attach = function(_, buf)
   vim.api.nvim_buf_set_keymap(buf, "n", "[[",
     "<cmd>lua vim.diagnostic.goto_prev()<CR>",
     { desc = "Quickfix Diagnostics", noremap = true, silent = false })
@@ -26,8 +27,21 @@ local lsp_attach = function(client, buf)
   vim.api.nvim_buf_set_option(buf, "omnifunc", "v:lua.vim.lsp.omnifunc")
   vim.api.nvim_buf_set_option(buf, "tagfunc", "v:lua.vim.lsp.tagfunc")
 
-  local server_name = vim.bo[buf].filetype
-  local tab_size = server_configs[server_name] or 2
+  ------------------------------------------------------------------
+  -- Indentation rules
+  ------------------------------------------------------------------
+  local ft = vim.bo[buf].filetype
+
+  -- Makefiles MUST use real <Tab> characters
+  if ft == "make" then
+    vim.bo[buf].expandtab   = false  -- keep real tabs
+    vim.bo[buf].tabstop     = 4      -- visual width (your choice)
+    vim.bo[buf].shiftwidth  = 4
+    vim.bo[buf].softtabstop = 0
+    return
+  end
+
+  local tab_size = server_configs[ft] or 2
   set_tab_size(buf, tab_size)
 end
 
@@ -53,13 +67,20 @@ lspconfig.util.default_config = vim.tbl_deep_extend(
 )
 
 require("lazy-lsp").setup {
-  excluded_servers = { "buf_ls", "ccls", "sourcekit", "denols", "intelliphense" },
+  excluded_servers = {
+    "buf_ls",
+    "ccls",
+    "clangd",
+    "sourcekit",
+    "denols",
+    "intelliphense",
+  },
   preferred_servers = {
-    html = { "html", "ts_ls", "cssls" },
-    python = { "pyright" },
-    lua = { "lua_ls" },
-    javascript = { "ts_ls" },
-    php = { "phpactor" },
+    html        =  { "html", "ts_ls", "cssls" },
+    python      = { "pyright" },
+    lua         = { "lua_ls" },
+    javascript  = { "ts_ls" },
+    typescript  = { "ts_ls" },
   },
   prefer_local = false,
   default_config = lsp_defaults,
@@ -86,6 +107,9 @@ require("lazy-lsp").setup {
     },
     lua_ls = {
       settings = {
+        volar = {
+          root_dir = lspconfig.util.root_pattern("package.json")
+        },
         Lua = {
           diagnostics = {
             -- Get the language server to recognize the `vim` and `love` globals
