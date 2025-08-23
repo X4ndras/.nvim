@@ -1,22 +1,6 @@
 local m = {}
 
 function m.setup()
-    do
-      local orig_request = vim.lsp.client.request
-      vim.lsp.client.request = function(client, method, params, handler, bufnr)
-        -- If handler is actually a bufnr (number) and bufnr is a function (handler),
-        -- then the plugin probably swapped arguments: swap them back.
-        if type(handler) == "number" and type(bufnr) == "function" then
-          handler, bufnr = bufnr, handler
-        end
-        -- If something still looks wrong (bufnr is a function), drop it
-        if type(bufnr) == "function" then
-          bufnr = nil
-        end
-        return orig_request(client, method, params, handler, bufnr)
-      end
-    end
-
     vim.hl = vim.highlight
 
     require('firefly.opt')
@@ -33,7 +17,7 @@ function m.setup()
     require('firefly.plugins.treesitter')
 
     require("firefly-theme").colorize()
-    --vim.api.nvim_command("Colorscheme one-dark")
+    vim.api.nvim_command("Colorscheme cursor")
 
     require("firefly.plugins.ai")
 

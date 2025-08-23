@@ -1,0 +1,42 @@
+{
+  "colors": {
+    "color0": "#1a1a1a",
+    "color1": "#d4303d",
+    "color2": "#a8cc7c",
+    "color3": "#efb080",
+    "color4": "#43a1ff",
+    "color5": "#aa9bf5",
+    "color6": "#56b6c2",
+    "color7": "#b9bfca",
+    "color8": "#505050",
+    "color9": "#e06c75",
+    "color10": "#c8dfac",
+    "color11": "#F1D6AB",
+    "color12": "#87c3ff",
+    "color13": "#c678dd",
+    "color14": "#83d6c5",
+    "color15": "#d1d1d1",
+    "color16": "#d19a66",
+    "color17": "#e5c07b",
+    "bg0": "#1a1a1a",
+    "bg1": "#141414",
+    "bg2": "#353b45",
+    "fg0": "#dcdfe4",
+    "fg1": "#9da5b4",
+    "fg2": "#978787"
+  },
+  "mappings": {
+    "comment": "color8",
+    "keyword": "color14",
+    "string": "color10",
+    "number": "color12",
+    "variable": "color9",
+    "fn": "color3",
+    "type": "color3",
+    "class": "color6",
+    "parameter": "color9",
+    "operator": "color15",
+    "builtin": "color6",
+    "property": "color5"
+  }
+}
