@@ -396,12 +396,16 @@ function m.load()
     ['@lsp.typemod.variable.defaultLibrary.javascript'] = { link = '@default.builtin' },
     ['@lsp.typemod.function.defaultLibrary.javascript'] = { link = '@function' },
 
+
+    --      typescript      ---
     ['@lsp.type.class.typescript']                      = { link = '@macro' },
     ['@constructor.typescript']                         = { link = '@macro' },
     ['@lsp.typemod.variable.defaultLibrary.typescript'] = { link = '@default.builtin' },
     ['@lsp.typemod.function.defaultLibrary.typescript'] = { link = '@function' },
     ['@keyword.coroutine.typescript']                   = { link = 'Special' },
+    ['@tag.attribute.tsx']                              = { link = '@tag.attribute.html' },
 
+    --      css     --
     ['@operator.css']                                   = { link = 'Special' },
     ['@keyword.directive.css']                          = { link = '@macro' },
     ['@tag.css']                                        = { fg = palette[mappings.variable] },
