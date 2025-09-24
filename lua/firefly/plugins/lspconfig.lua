@@ -107,9 +107,6 @@ require("lazy-lsp").setup {
     },
     lua_ls = {
       settings = {
-        volar = {
-          root_dir = lspconfig.util.root_pattern("package.json")
-        },
         Lua = {
           diagnostics = {
             -- Get the language server to recognize the `vim` and `love` globals
