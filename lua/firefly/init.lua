@@ -17,7 +17,7 @@ function m.setup()
     require('firefly.plugins.treesitter')
 
     require("firefly-theme").colorize()
-    vim.api.nvim_command("Colorscheme cursor")
+    vim.api.nvim_command("Colorscheme firefly")
 
     require("firefly.plugins.ai")
 

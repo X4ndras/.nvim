@@ -1,5 +1,4 @@
 local firefly = { }
-
 local theme = require("firefly-theme.theme")
 local palette= require("firefly-theme.palette")
 
@@ -19,7 +18,7 @@ function firefly.colorize()
 
                 -- Check for .json files and extract theme name
                 if name:match("%.json$") then
-                    local theme_name = name:gsub("%.json$", "")
+                      local theme_name = name:gsub("%.json$", "")
                     table.insert(themes, theme_name)
                 end
             end

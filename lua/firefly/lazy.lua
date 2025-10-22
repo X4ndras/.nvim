@@ -21,6 +21,8 @@ local plugins = {
 
   {
     "dundalek/lazy-lsp.nvim",
+    event = "VeryLazy",
+    lazy = true,
     dependencies = { "neovim/nvim-lspconfig" },
   },
 

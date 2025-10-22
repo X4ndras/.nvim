@@ -1,5 +1,4 @@
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
-local lspconfig = require('lspconfig')
 
 local function set_tab_size(bufnr, size)
   vim.bo[bufnr].tabstop = size
@@ -34,8 +33,8 @@ local lsp_attach = function(_, buf)
 
   -- Makefiles MUST use real <Tab> characters
   if ft == "make" then
-    vim.bo[buf].expandtab   = false  -- keep real tabs
-    vim.bo[buf].tabstop     = 4      -- visual width (your choice)
+    vim.bo[buf].expandtab   = false -- keep real tabs
+    vim.bo[buf].tabstop     = 4     -- visual width (your choice)
     vim.bo[buf].shiftwidth  = 4
     vim.bo[buf].softtabstop = 0
     return
@@ -52,102 +51,98 @@ local lsp_defaults = {
   root = vim.loop.cwd(),
   capabilities = capabilities,
   on_attach = lsp_attach,
-}
-
-lsp_defaults.general = {
-  positionEncodings = { "utf-8", "utf-16" }
+  general = {
+    positionEncodings = { "utf-8", "utf-16" }
+  },
 }
 
 lsp_defaults.capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-lspconfig.util.default_config = vim.tbl_deep_extend(
-  'force',
-  lspconfig.util.default_config,
-  lsp_defaults
-)
 
 require("lazy-lsp").setup {
+  --use_vim_lsp_config = true,
   excluded_servers = {
     "buf_ls",
     "ccls",
-    "clangd",
+    --"clangd",
     "sourcekit",
-    "denols",
     "intelliphense",
+    "flow",                            -- prefer eslint and ts_ls
+    "ltex",                            -- grammar tool using too much CPU
+    "quick_lint_js",                   -- prefer eslint and ts_ls
+    "denols",
+    "oxlint",                          -- prefer eslint
+    "scry",                            -- archived on Jun 1, 2023
+    "tailwindcss",                     -- associates with too many filetypes
   },
   preferred_servers = {
-    html        =  { "html", "ts_ls", "cssls" },
-    python      = { "pyright" },
-    lua         = { "lua_ls" },
-    javascript  = { "ts_ls" },
-    typescript  = { "ts_ls" },
+    html       = { "html", "ts_ls", "cssls" },
+    python     = { "pyright" },
+    lua        = { "lua_ls" },
+    javascript = { "ts_ls" },
+    typescript = { "ts_ls" },
   },
   prefer_local = false,
-  default_config = lsp_defaults,
-  configs = {
-    rust_analyzer = {
-      settings = {
-        checkOnSave = {
-          command = "clippy",
-        },
-        --procMacro = {
-        --  enable = true
-        --},
-      },
-    },
-    clangd = {
-      cmd = {
-        "clangd",
-        "--background-index",
-        "--clang-tidy",
-        "--header-insertion=never",
-        "--completion-style=detailed",
-        "--fallback-style=llvm",
-      },
-    },
-    lua_ls = {
-      settings = {
-        Lua = {
-          diagnostics = {
-            -- Get the language server to recognize the `vim` and `love` globals
-            globals = { "vim", "love" },
-          },
-          workspace = {
-            -- Make the server aware of Love2D runtime libraries
-            -- Use proper Neovim API to access runtime paths
-            library = {
-              vim.api.nvim_get_runtime_file("", true),
-            },
-            -- Enable to load Love2D definitions via builtin third-party library support
-            checkThirdParty = true,
-          },
-          completion = {
-            callSnippet = "Replace"
-          },
-          telemetry = {
-            enable = false,
-          },
-          runtime = {
-            -- Use LuaJIT for LÖVE
-            version = "LuaJIT",
-          },
-        },
-      },
-    },
-  }
+  -- rust_analyzer = {
+  --   settings = {
+  --     checkOnSave = {
+  --       command = "clippy",
+  --     },
+  --     --procMacro = {
+  --     --  enable = true
+  --     --},
+  --   },
+  -- },
 }
 
--- Setup clangd manually
---lspconfig.clangd.setup {
---    capabilities = capabilities,
---    initializationOptions = lsp_defaults.initializationOptions
---}
---vim.lsp.config('clangd', {
---  -- Server-specific settings. See `:help lsp-quickstart`
---  settings = {
---    ['clangd'] = {
---      capabilities = capabilities,
---      initializationOptions = lsp_defaults.initializationOptions
---    },
---  },
---})
+vim.lsp.config("*", lsp_defaults)
+vim.lsp.config("clangd", {
+  cmd = {
+    "clangd",
+    "--background-index",
+    "--clang-tidy",
+    "--header-insertion=never",
+    "--completion-style=detailed",
+    "--fallback-style=llvm",
+  },
+})
+vim.lsp.config("pyright", {
+  settings = {
+    python = {
+      analysis = {
+        typeCheckingMode = "stricter",
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
+      },
+    },
+  },
+})
+vim.lsp.config("lua_ls", {
+  settings = {
+    Lua = {
+      diagnostics = {
+        -- Get the language server to recognize the `vim` and `love` globals
+        globals = { "vim", "love" },
+      },
+      workspace = {
+        -- Make the server aware of Love2D runtime libraries
+        -- Use proper Neovim API to access runtime paths
+        library = {
+          vim.api.nvim_get_runtime_file("", true),
+        },
+        -- Enable to load Love2D definitions via builtin third-party library support
+        checkThirdParty = true,
+      },
+      completion = {
+        callSnippet = "Replace"
+      },
+      telemetry = {
+        enable = false,
+      },
+      runtime = {
+        -- Use LuaJIT for LÖVE
+        version = "LuaJIT",
+      },
+    },
+  },
+})
