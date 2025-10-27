@@ -60,7 +60,7 @@ lsp_defaults.capabilities.textDocument.completion.completionItem.snippetSupport 
 
 
 require("lazy-lsp").setup {
-  --use_vim_lsp_config = true,
+  use_vim_lsp_config = true,
   excluded_servers = {
     "buf_ls",
     "ccls",

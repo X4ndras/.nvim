@@ -19,12 +19,8 @@ local plugins = {
     dependencies = { "nvim-lua/plenary.nvim" }
   },
 
-  {
-    "dundalek/lazy-lsp.nvim",
-    event = "VeryLazy",
-    lazy = true,
-    dependencies = { "neovim/nvim-lspconfig" },
-  },
+  -- { dir = '~/Downloads/lazy-lsp.nvim/' },
+  "dundalek/lazy-lsp.nvim",
 
   --[[
   {

@@ -22,16 +22,16 @@ end
 
 ---@class Actions
 local Action = {
-    rename          = 'rename',
-    move            = 'move',
-    copy            = 'copy',
-    paste           = 'paste',
+    rename      = 'rename',
+    move        = 'move',
+    copy        = 'copy',
+    paste       = 'paste',
 
-    delete_file     = 'delete_file',
-    delete_dir      = 'delete_dir',
+    delete_file = 'delete_file',
+    delete_dir  = 'delete_dir',
 
-    create_file     = 'create_file',
-    create_dir      = 'create_dir'
+    create_file = 'create_file',
+    create_dir  = 'create_dir'
 }
 
 --- Define the UndoAction type
@@ -40,7 +40,7 @@ local Action = {
 ---@field path      string
 ---@field old_path  string  | nil
 ---@field is_dir    boolean | nil
----@field content   string  | table | nil 
+---@field content   string  | table | nil
 
 ---@param action UndoAction
 local function push_undo_stack(action)
@@ -60,7 +60,8 @@ local function refresh_netrw()
 
     if vim.bo.filetype == 'netrw' then
         --vim.cmd('silent! normal j')
-        vim.cmd('silent! e .')
+        local dir = vim.b.netrw_curdir or vim.fn.expand('%:p')
+        vim.cmd('silent! edit ' .. vim.fn.fnameescape(dir))
         vim.cmd('redraw')
     end
 
@@ -74,10 +75,10 @@ local function refresh_netrw()
             -- Adjust for 1-based vs 0-based indexing
             local max_row = math.max(line_count - 1, 0)
             local target_row = math.min(cursor[1] - 1, max_row)
-            local target_col = math.min(cursor[2], vim.fn.col({target_row + 1, '$'}) - 1)
+            local target_col = math.min(cursor[2], vim.fn.col({ target_row + 1, '$' }) - 1)
 
             pcall(vim.api.nvim_win_set_cursor, current_win, {
-                target_row + 1,  -- Convert back to 1-based row
+                target_row + 1, -- Convert back to 1-based row
                 target_col
             })
         end
@@ -150,7 +151,6 @@ function M.rename_file()
             refresh_netrw()
         end
     end)
-
 end
 
 -- Function to cut a file
@@ -241,7 +241,7 @@ function M.paste_file()
                     if not newname or newname == "" then return end
                     destpath = dir .. '/' .. newname
                 elseif choice == "o" then
-                    uv.fs_unlink(destpath)  -- Remove existing file
+                    uv.fs_unlink(destpath) -- Remove existing file
                 else
                     vim.notify("Paste cancelled", vim.log.levels.INFO)
                     return
@@ -463,33 +463,33 @@ local function delete_directory()
 
     -- Prompt the user for confirmation
     vim.ui.input({
-        prompt = 'Are you sure you want to delete directory ' .. dirname .. ' and all its contents? (y/n): '
-    },
-    function(input)
-        if input ~= 'y' then
-            vim.notify('Delete cancelled', vim.log.levels.INFO)
-            return
-        end
-
-        local success, err = delete_dir_recursive(dirpath)
-        if not success then
-            vim.notify('Delete failed: ' .. err, vim.log.levels.ERROR)
-        else
-            push_undo_stack({
-                action = Action.delete_dir,
-                path = dirpath,
-                content = content,
-                is_dir = true
-            })
-            success, err = uv.fs_rmdir(dirpath)
-            if not success then
-                vim.notify('Could not remove directory: ' .. err, vim.log.levels.ERROR)
-            else
-                vim.notify('Directory deleted: ' .. dirname)
-                refresh_netrw()
+            prompt = 'Are you sure you want to delete directory ' .. dirname .. ' and all its contents? (y/n): '
+        },
+        function(input)
+            if input ~= 'y' then
+                vim.notify('Delete cancelled', vim.log.levels.INFO)
+                return
             end
-        end
-    end)
+
+            local success, err = delete_dir_recursive(dirpath)
+            if not success then
+                vim.notify('Delete failed: ' .. err, vim.log.levels.ERROR)
+            else
+                push_undo_stack({
+                    action = Action.delete_dir,
+                    path = dirpath,
+                    content = content,
+                    is_dir = true
+                })
+                success, err = uv.fs_rmdir(dirpath)
+                if not success then
+                    vim.notify('Could not remove directory: ' .. err, vim.log.levels.ERROR)
+                else
+                    vim.notify('Directory deleted: ' .. dirname)
+                    refresh_netrw()
+                end
+            end
+        end)
 end
 
 -- Function to delete a path (either a file or a directory)
@@ -555,7 +555,6 @@ function M.restore_rename(action)
     end
 end
 
-
 ---@param action UndoAction
 ---@return boolean | nil
 function M.restore_delete(action)
@@ -601,16 +600,15 @@ function M.restore_create_file(action)
     end
 end
 
-
 local undo_functions = {
-    [Action.rename]         = M.restore_rename,
-    [Action.move]           = M.restore_rename,
+    [Action.rename]      = M.restore_rename,
+    [Action.move]        = M.restore_rename,
 
-    [Action.delete_file]    = M.restore_delete,
-    [Action.delete_dir]     = M.restore_delete,
-    [Action.create_file]    = M.restore_create_file,
-    [Action.create_dir]     = M.restore_create_dir,
-    [Action.copy]           = M.restore_create_file,
+    [Action.delete_file] = M.restore_delete,
+    [Action.delete_dir]  = M.restore_delete,
+    [Action.create_file] = M.restore_create_file,
+    [Action.create_dir]  = M.restore_create_dir,
+    [Action.copy]        = M.restore_create_file,
 }
 
 function M.undo()
