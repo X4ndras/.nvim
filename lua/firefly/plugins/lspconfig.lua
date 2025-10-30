@@ -9,7 +9,8 @@ end
 
 local server_configs = {
   rust = 4,
-  python = 4
+  python = 4,
+  javascript = 2,
 }
 
 --- client, buf
@@ -41,23 +42,9 @@ local lsp_attach = function(_, buf)
   end
 
   local tab_size = server_configs[ft] or 2
+  -- print("Filetype:", ft, " Tab size set to:", tab_size)
   set_tab_size(buf, tab_size)
 end
-
-local lsp_defaults = {
-  flags = {
-    debounce_text_changes = 150,
-  },
-  root = vim.loop.cwd(),
-  capabilities = capabilities,
-  on_attach = lsp_attach,
-  general = {
-    positionEncodings = { "utf-8", "utf-16" }
-  },
-}
-
-lsp_defaults.capabilities.textDocument.completion.completionItem.snippetSupport = true
-
 
 require("lazy-lsp").setup {
   use_vim_lsp_config = true,
@@ -67,13 +54,13 @@ require("lazy-lsp").setup {
     --"clangd",
     "sourcekit",
     "intelliphense",
-    "flow",                            -- prefer eslint and ts_ls
-    "ltex",                            -- grammar tool using too much CPU
-    "quick_lint_js",                   -- prefer eslint and ts_ls
+    "flow",          -- prefer eslint and ts_ls
+    "ltex",          -- grammar tool using too much CPU
+    "quick_lint_js", -- prefer eslint and ts_ls
     "denols",
-    "oxlint",                          -- prefer eslint
-    "scry",                            -- archived on Jun 1, 2023
-    "tailwindcss",                     -- associates with too many filetypes
+    "oxlint",        -- prefer eslint
+    "scry",          -- archived on Jun 1, 2023
+    "tailwindcss",   -- associates with too many filetypes
   },
   preferred_servers = {
     html       = { "html", "ts_ls", "cssls" },
@@ -83,19 +70,24 @@ require("lazy-lsp").setup {
     typescript = { "ts_ls" },
   },
   prefer_local = false,
-  -- rust_analyzer = {
-  --   settings = {
-  --     checkOnSave = {
-  --       command = "clippy",
-  --     },
-  --     --procMacro = {
-  --     --  enable = true
-  --     --},
-  --   },
-  -- },
 }
 
-vim.lsp.config("*", lsp_defaults)
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+vim.lsp.config("*", {
+  flags = {
+    debounce_text_changes = 150,
+  },
+  capabilities = capabilities,
+  on_attach = {
+    mine = lsp_attach,
+    default = lsp_attach,
+  },
+  root = vim.loop.cwd(),
+  general = {
+    positionEncodings = { "utf-8", "utf-16" }
+  },
+})
+
 vim.lsp.config("clangd", {
   cmd = {
     "clangd",
@@ -106,6 +98,7 @@ vim.lsp.config("clangd", {
     "--fallback-style=llvm",
   },
 })
+
 vim.lsp.config("pyright", {
   settings = {
     python = {
@@ -117,6 +110,7 @@ vim.lsp.config("pyright", {
     },
   },
 })
+
 vim.lsp.config("lua_ls", {
   settings = {
     Lua = {
