@@ -22,33 +22,6 @@ local plugins = {
   -- { dir = '~/Downloads/lazy-lsp.nvim/' },
   "dundalek/lazy-lsp.nvim",
 
-  --[[
-  {
-    "olimorris/codecompanion.nvim",
-    config = true,
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-      "zbirenbaum/copilot.lua",
-      "echasnovski/mini.nvim" -- (optional)
-    },
-  },
-  ]]--
-
-  {
-    "yetone/avante.nvim",
-    event = "VeryLazy",
-    lazy = false,
-    version = false,
-    build = "make",
-    dependencies = {
-      "stevearc/dressing.nvim",
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "zbirenbaum/copilot.lua"
-    },
-  },
-
   -- Snippets
   { 'L3MON4D3/LuaSnip',      version = "v2.3.0" },
   -- Snippets

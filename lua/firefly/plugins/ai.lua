@@ -110,6 +110,7 @@ local multi_file_selector = function(params)
 end
 
 
+--[[
 require('avante').setup({
     --provider = "openai",
     --provider = "copilot/claude-3.7",
@@ -164,8 +165,8 @@ require('avante').setup({
             dismiss = "<C-]>",
         },
         jump = {
-            next = "]]",
-            prev = "[[",
+            next = "\]\]",
+            prev = "\[\[",
         },
         submit = {
             normal = "<CR>",
@@ -240,6 +241,7 @@ require('avante').setup({
         },
     },
 })
+--]]
 
 --[[
 require("codecompanion").setup({
