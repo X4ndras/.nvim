@@ -243,30 +243,24 @@ require('avante').setup({
 })
 --]]
 
---[[
 require("codecompanion").setup({
   adapters = {
-    deepseek = function()
-      return require("codecompanion.adapters").extend("deepseek", {
-        env = {
-          api_key = "DEEPSEEK_API_KEY",
-        },
-        schema = {
-          model = {
-            default = "deepseek-reasoner",
+    http = {
+      copilot = function()
+        return require("codecompanion.adapters").extend("copilot", {
+          schema = {
+            model = {
+              default = "claude-3.7-sonnet",
+            },
           },
-        },
-      })
-    end,
-    copilot = function()
-      return require("codecompanion.adapters").extend("copilot", {
-        schema = {
-          model = {
-            default = "claude-3.7-sonnet",
-          },
-        },
-      })
-    end,
+        })
+      end,
+      acp = {
+        claude_code = function()
+          return require("codecompanion.adapters").extend("claude_code")
+        end,
+      },
+    },
   },
   display = {
     action_palette = {
@@ -284,11 +278,9 @@ require("codecompanion").setup({
     },
   },
   strategies = {
-    chat = { adapter = "copilot", },
-    inline = { adapter = "copilot" },
+    chat = { adapter = "claude_code", },
+    inline = { adapter = "claude_code" },
   },
 })
 
 vim.keymap.set("n", "<Leader>cc", function() vim.cmd("CodeCompanionChat toggle") end)
-vim.keymap.set("n", "<Leader>cn", function() vim.cmd("CodeCompanionChat") end, { desc = "Open new CodeCompanion chat" })
-]] --

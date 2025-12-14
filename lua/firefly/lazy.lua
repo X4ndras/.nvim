@@ -70,23 +70,25 @@ local plugins = {
     version = "*",
   },
 
-  -- Undo tree
-  'mbbill/undotree',
-
-  -- Smooth Scrolling
-  {
-    "declancm/cinnamon.nvim",
-    version = "*",
-  },
-
   {
       'MeanderingProgrammer/render-markdown.nvim',
       dependencies = { 'nvim-treesitter/nvim-treesitter' },
+      ft = {"markdown", "codecompanion"}
+  },
+
+  {
+    "olimorris/codecompanion.nvim",
+    opts = {},
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "zbirenbaum/copilot.lua"
+    },
   },
 
   -- game
   -- 'ThePrimeagen/vim-be-good',
   'tidalcycles/vim-tidal',
+
   -------------------------
   ------ Own Plugins ------
   -------------------------

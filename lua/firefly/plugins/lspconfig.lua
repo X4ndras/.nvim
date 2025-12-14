@@ -61,6 +61,7 @@ require("lazy-lsp").setup {
     "oxlint",        -- prefer eslint
     "scry",          -- archived on Jun 1, 2023
     "tailwindcss",   -- associates with too many filetypes
+    "vuels", "vls", "volar", -- legacy Vue LSPs
   },
   preferred_servers = {
     html       = { "html", "ts_ls", "cssls" },
