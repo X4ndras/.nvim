@@ -3,18 +3,10 @@ local plugins = {
   ------ Essential Plugins ------
   -------------------------------
 
-  -- Theme (loaded first, before other plugins)
+  -- Theme (loaded fully asynchronously after startup)
   {
     dir = '~/.config/nvim/plugs/firefly-theme',
-    lazy = false,
-    priority = 1000, -- Load before all other plugins
-    config = function()
-      require("firefly-theme").setup({
-        persist_theme = true,
-        default_theme = "kanagawa-dragon",
-      })
-      require("firefly-theme").colorize()
-    end,
+    lazy = true, -- Don't auto-load
   },
 
   -- nvim lsp (Language Server) - defer until file is opened
