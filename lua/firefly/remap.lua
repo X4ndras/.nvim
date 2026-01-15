@@ -12,17 +12,25 @@ vim.keymap.set("n", "<M-L>", "<C-w>L")
 
 vim.keymap.set("n", "<leader>w", "<C-w>")
 
--- fluent scrolling
-local cinnamon = require("cinnamon")
-cinnamon.setup()
+-- fluent scrolling (lazy loaded - require cinnamon only when used)
+local function cinnamon_scroll(cmd)
+  return function()
+    local ok, cinnamon = pcall(require, "cinnamon")
+    if ok then
+      cinnamon.scroll(cmd)
+    else
+      vim.cmd("normal! " .. vim.api.nvim_replace_termcodes(cmd, true, false, true))
+    end
+  end
+end
 
-vim.keymap.set("n", "<C-U>", function() cinnamon.scroll("<C-U>zz") end)
-vim.keymap.set("n", "<C-D>", function() cinnamon.scroll("<C-D>zz") end)
-vim.keymap.set("n", "<C-B>", function() cinnamon.scroll("<C-B>zz") end)
-vim.keymap.set("n", "<C-F>", function() cinnamon.scroll("<C-F>zz") end)
-vim.keymap.set("n", "n", function() cinnamon.scroll("nzz") end)
-vim.keymap.set("n", "N", function() cinnamon.scroll("Nzz") end)
-vim.keymap.set("n", "''", function() cinnamon.scroll("''zz") end)
+vim.keymap.set("n", "<C-U>", cinnamon_scroll("<C-U>zz"))
+vim.keymap.set("n", "<C-D>", cinnamon_scroll("<C-D>zz"))
+vim.keymap.set("n", "<C-B>", cinnamon_scroll("<C-B>zz"))
+vim.keymap.set("n", "<C-F>", cinnamon_scroll("<C-F>zz"))
+vim.keymap.set("n", "n", cinnamon_scroll("nzz"))
+vim.keymap.set("n", "N", cinnamon_scroll("Nzz"))
+vim.keymap.set("n", "''", cinnamon_scroll("''zz"))
 
 vim.keymap.set({
         'n',
@@ -70,8 +78,13 @@ end)
 --vim.keymap.set('n', '<leader>q', function () end)
 
 
-local bufoptts = require("bufopt")
-vim.keymap.set('n', '<leader>m', bufoptts.open_floating_window, { noremap = true, silent = true })
+-- Bufopt (lazy loaded)
+vim.keymap.set('n', '<leader>m', function()
+  local ok, bufoptts = pcall(require, "bufopt")
+  if ok then
+    bufoptts.open_floating_window()
+  end
+end, { noremap = true, silent = true })
 
 vim.keymap.set('n', '<M-u>', function() vim.api.nvim_command('UndotreeToggle') end)
 vim.keymap.set('n', '<leader><leader>', function() vim.cmd('Telescope find_files') end)
