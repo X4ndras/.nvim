@@ -16,8 +16,14 @@ function m.setup()
     require('firefly.plugins.autotag')
     require('firefly.plugins.treesitter')
 
+    -- Setup firefly-theme with optional config
+    -- persist_theme: auto-save and restore last used theme (default: true)
+    -- default_theme: fallback theme if no saved theme exists (default: nil)
+    require("firefly-theme").setup({
+        persist_theme = true,
+        default_theme = "kanagawa-dragon",  -- Fallback if no saved theme
+    })
     require("firefly-theme").colorize()
-    vim.api.nvim_command("Colorscheme firefly")
 
     require("firefly.plugins.ai")
 

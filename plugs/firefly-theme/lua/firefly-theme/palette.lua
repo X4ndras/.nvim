@@ -1,30 +1,9 @@
---// #BD5644
---// #A64B3A
---// #6A2F25
-
---// #E0A3A6
---// #d68589
---// #CC666B
-
---// #888198
---// #625C70
---// #45404F
-
---// #F1D6AB
---// #E7AE64
---// #D48B1D
-
---// #E3DEDE
---// #CAC2C2
---// #978787
-
---// #2B2B28
---// #171512
---// #0F0E0F -- normal bg
-
---// #06060b -- box shadow
-
 local m = {}
+
+-- Theme metadata
+m.name = "Default"
+m.description = "Default One Dark inspired theme"
+m.variant = "dark" -- "dark" or "light"
 
 ---@class PaletteColors
 ---@field bg0 string
@@ -33,6 +12,7 @@ local m = {}
 ---@field fg0 string
 ---@field fg1 string
 ---@field fg2 string
+---@field float_bg string|nil
 ---@field color0 string
 ---@field color1 string
 ---@field color2 string
@@ -59,6 +39,7 @@ m.palette = {
   bg0 = '#21252b',     -- (nc) unfocued background
   bg1 = '#2c313a',     -- (surface) lighter background
   bg2 = '#353b45',     -- (overlay) selection/popup background
+  float_bg = nil,      -- (float) popup/float background, falls back to bg2
 
   color0 = '#282c34',  -- black (bg) main background
   color1 = '#e06c75',  -- red
@@ -104,6 +85,25 @@ m.mappings = {
   property = "color1",   -- Red
 }
 
+-- Default diagnostic color mappings
+m.diagnostics = {
+  error = "color9",      -- Bright red
+  warning = "color17",   -- Bright orange/yellow
+  info = "color4",       -- Blue
+  hint = "color6",       -- Cyan
+  ok = "color2",         -- Green
+}
+
+-- Default statusline mode color mappings
+m.statusline = {
+  normal = "color5",     -- Magenta (keyword color)
+  insert = "color3",     -- Yellow (class color)
+  visual = "color4",     -- Blue (fn color)
+  replace = "color1",    -- Red
+  command = "color6",    -- Cyan
+  terminal = "color2",   -- Green
+}
+
 ---@param path string
 function m.read_theme(path)
   local file, err = io.open(path, 'r')
@@ -121,6 +121,17 @@ function m.read_theme(path)
     return nil
   end
 
+  -- Store metadata if provided
+  if val.name then
+    m.name = val.name
+  end
+  if val.description then
+    m.description = val.description
+  end
+  if val.variant then
+    m.variant = val.variant
+  end
+
   -- Handle the new JSON structure with colors and mappings
   if val.colors then
     m.palette = vim.tbl_deep_extend('force', m.palette, val.colors)
@@ -132,6 +143,16 @@ function m.read_theme(path)
   -- Store mappings if provided
   if val.mappings then
     m.mappings = vim.tbl_deep_extend('force', m.mappings, val.mappings)
+  end
+
+  -- Store diagnostic mappings if provided
+  if val.diagnostics then
+    m.diagnostics = vim.tbl_deep_extend('force', m.diagnostics, val.diagnostics)
+  end
+
+  -- Store statusline mappings if provided
+  if val.statusline then
+    m.statusline = vim.tbl_deep_extend('force', m.statusline, val.statusline)
   end
 
   return m.palette
@@ -152,6 +173,30 @@ end
 
 function m.get_mappings()
   return m.mappings
+end
+
+function m.get_diagnostics()
+  return m.diagnostics
+end
+
+function m.get_statusline()
+  return m.statusline
+end
+
+function m.get_variant()
+  return m.variant
+end
+
+function m.get_float_bg()
+  return m.palette.float_bg or m.palette.bg2
+end
+
+function m.get_info()
+  return {
+    name = m.name,
+    description = m.description,
+    variant = m.variant,
+  }
 end
 
 return m

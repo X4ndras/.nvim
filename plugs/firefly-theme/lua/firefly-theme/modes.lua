@@ -1,58 +1,62 @@
 local modes = {}
 
 local function set_modes()
-    local palette = require('firefly-theme.palette')
-    local mappings = palette.get_mappings()
-    palette = palette.get()
+    local palette_module = require('firefly-theme.palette')
+    local statusline = palette_module.get_statusline()
+    local palette = palette_module.get()
 
-    local normal_bg = palette[mappings.keyword]
-    local visual_bg = palette[mappings.fn]
-    local insert_bg = palette[mappings.class]
-    local insert_fg = palette.bg1
+    -- Get colors from statusline mappings
+    local normal_bg = palette[statusline.normal]
+    local visual_bg = palette[statusline.visual]
+    local insert_bg = palette[statusline.insert]
+    local replace_bg = palette[statusline.replace]
+    local command_bg = palette[statusline.command]
+    local terminal_bg = palette[statusline.terminal]
+    local mode_fg = palette.bg1
 
     return {
-        ['n']      = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
-        ['no']     = {mode = 'O-P', bg = normal_bg, fg = palette.bg1},
-        ['nov']    = {mode = 'O-P', bg = normal_bg, fg = palette.bg1},
-        ['noV']    = {mode = 'O-P', bg = normal_bg, fg = palette.bg1},
-        ['no\22']  = {mode = 'O-P', bg = normal_bg, fg = palette.bg1},
-        ['niI']    = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
-        ['niR']    = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
-        ['niV']    = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
-        ['nt']     = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
-        ['ntT']    = {mode = 'NM',  bg = normal_bg, fg = palette.bg1},
+        ['n']      = {mode = 'NM',  bg = normal_bg, fg = mode_fg},
+        ['no']     = {mode = 'O-P', bg = normal_bg, fg = mode_fg},
+        ['nov']    = {mode = 'O-P', bg = normal_bg, fg = mode_fg},
+        ['noV']    = {mode = 'O-P', bg = normal_bg, fg = mode_fg},
+        ['no\22']  = {mode = 'O-P', bg = normal_bg, fg = mode_fg},
+        ['niI']    = {mode = 'NM',  bg = normal_bg, fg = mode_fg},
+        ['niR']    = {mode = 'NM',  bg = normal_bg, fg = mode_fg},
+        ['niV']    = {mode = 'NM',  bg = normal_bg, fg = mode_fg},
+        ['nt']     = {mode = 'NM',  bg = normal_bg, fg = mode_fg},
+        ['ntT']    = {mode = 'NM',  bg = normal_bg, fg = mode_fg},
 
-        ['v']      = {mode = 'VM',  bg = visual_bg, fg = palette.bg1},
-        ['vs']     = {mode = 'VM',  bg = visual_bg, fg = palette.bg1},
-        ['V']      = {mode = 'V-L', bg = visual_bg, fg = palette.bg1},
-        ['Vs']     = {mode = 'V-L', bg = visual_bg, fg = palette.bg1},
-        ['\22']    = {mode = 'V-B', bg = visual_bg, fg = palette.bg1},
-        ['\22s']   = {mode = 'V-B', bg = visual_bg, fg = palette.bg1},
+        ['v']      = {mode = 'VM',  bg = visual_bg, fg = mode_fg},
+        ['vs']     = {mode = 'VM',  bg = visual_bg, fg = mode_fg},
+        ['V']      = {mode = 'V-L', bg = visual_bg, fg = mode_fg},
+        ['Vs']     = {mode = 'V-L', bg = visual_bg, fg = mode_fg},
+        ['\22']    = {mode = 'V-B', bg = visual_bg, fg = mode_fg},
+        ['\22s']   = {mode = 'V-B', bg = visual_bg, fg = mode_fg},
 
-        ['s']      = {mode = 'SLC', bg = palette.bg0, fg = palette.bg1},
-        ['S']      = {mode = 'S-L', bg = palette.bg0, fg = palette.bg1},
-        ['\19']    = {mode = 'S-B', bg = palette.bg0, fg = palette.bg1},
+        ['s']      = {mode = 'SLC', bg = visual_bg, fg = mode_fg},
+        ['S']      = {mode = 'S-L', bg = visual_bg, fg = mode_fg},
+        ['\19']    = {mode = 'S-B', bg = visual_bg, fg = mode_fg},
 
-        ['i']      = {mode = 'IM', bg = insert_bg, fg = insert_fg},
-        ['ic']     = {mode = 'IM', bg = insert_bg, fg = insert_fg},
-        ['ix']     = {mode = 'IM', bg = insert_bg, fg = insert_fg},
+        ['i']      = {mode = 'IM', bg = insert_bg, fg = mode_fg},
+        ['ic']     = {mode = 'IM', bg = insert_bg, fg = mode_fg},
+        ['ix']     = {mode = 'IM', bg = insert_bg, fg = mode_fg},
 
-        ['R']      = {mode = 'RM',  bg = palette.color1, fg = palette.bg1},
-        ['Rc']     = {mode = 'RM',  bg = palette.color1, fg = palette.bg1},
-        ['Rx']     = {mode = 'RM',  bg = palette.color1, fg = palette.bg1},
-        ['Rv']     = {mode = 'V-R', bg = palette.color1, fg = palette.bg1},
-        ['Rvc']    = {mode = 'V-R', bg = palette.color1, fg = palette.bg1},
-        ['Rvx']    = {mode = 'V-R', bg = palette.color1, fg = palette.bg1},
+        ['R']      = {mode = 'RM',  bg = replace_bg, fg = mode_fg},
+        ['Rc']     = {mode = 'RM',  bg = replace_bg, fg = mode_fg},
+        ['Rx']     = {mode = 'RM',  bg = replace_bg, fg = mode_fg},
+        ['Rv']     = {mode = 'V-R', bg = replace_bg, fg = mode_fg},
+        ['Rvc']    = {mode = 'V-R', bg = replace_bg, fg = mode_fg},
+        ['Rvx']    = {mode = 'V-R', bg = replace_bg, fg = mode_fg},
 
-        ['c']      = {mode = ' ',  bg = palette.bg1, fg = palette.color15},
-        ['cv']     = {mode = 'EX',  bg = palette.bg1, fg = palette.color15},
-        ['ce']     = {mode = 'EX',  bg = palette.bg1, fg = palette.color15},
-        ['!']      = {mode = '',   bg = palette.bg1, fg = palette.color15},
-        ['t']      = {mode = '',   bg = palette.bg1, fg = palette.color15},
+        ['c']      = {mode = 'CM',  bg = command_bg, fg = mode_fg},
+        ['cv']     = {mode = 'EX',  bg = command_bg, fg = mode_fg},
+        ['ce']     = {mode = 'EX',  bg = command_bg, fg = mode_fg},
+        ['!']      = {mode = 'SH',  bg = terminal_bg, fg = mode_fg},
+        ['t']      = {mode = 'TM',  bg = terminal_bg, fg = mode_fg},
 
-        ['r']      = {mode = 'RP',      bg = palette.bg0, fg = palette.bg1},
-        ['rm']     = {mode = 'MORE',    bg = palette.bg0, fg = palette.bg1},
-        ['r?']     = {mode = 'CONFIRM', bg = palette.bg0, fg = palette.bg1},
+        ['r']      = {mode = 'RP',      bg = replace_bg, fg = mode_fg},
+        ['rm']     = {mode = 'MORE',    bg = command_bg, fg = mode_fg},
+        ['r?']     = {mode = 'CONFIRM', bg = command_bg, fg = mode_fg},
     }
 end
 

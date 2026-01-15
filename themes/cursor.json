@@ -1,4 +1,7 @@
 {
+  "name": "Cursor",
+  "description": "Dark theme inspired by Cursor IDE",
+  "variant": "dark",
   "colors": {
     "color0": "#1a1a1a",
     "color1": "#d4303d",
@@ -23,7 +26,8 @@
     "bg2": "#353b45",
     "fg0": "#dcdfe4",
     "fg1": "#9da5b4",
-    "fg2": "#978787"
+    "fg2": "#978787",
+    "float_bg": "#141414"
   },
   "mappings": {
     "comment": "color8",
@@ -38,5 +42,20 @@
     "operator": "color15",
     "builtin": "color6",
     "property": "color5"
+  },
+  "diagnostics": {
+    "error": "color1",
+    "warning": "color17",
+    "info": "color4",
+    "hint": "color14",
+    "ok": "color2"
+  },
+  "statusline": {
+    "normal": "color14",
+    "insert": "color3",
+    "visual": "color5",
+    "replace": "color1",
+    "command": "color6",
+    "terminal": "color2"
   }
 }

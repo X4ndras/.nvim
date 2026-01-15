@@ -1,4 +1,7 @@
 {
+  "name": "Firefly",
+  "description": "Warm dark theme with salmon and earth tones",
+  "variant": "dark",
   "colors": {
     "color0": "#1c1a1c",
     "color1": "#A64B3A",
@@ -23,7 +26,8 @@
     "bg2": "#353b45",
     "fg0": "#dcdfe4",
     "fg1": "#9da5b4",
-    "fg2": "#978787"
+    "fg2": "#978787",
+    "float_bg": "#21252b"
   },
   "mappings": {
     "comment": "fg2",
@@ -38,5 +42,20 @@
     "operator": "color15",
     "builtin": "color6",
     "property": "color1"
+  },
+  "diagnostics": {
+    "error": "color9",
+    "warning": "color17",
+    "info": "color4",
+    "hint": "color6",
+    "ok": "color2"
+  },
+  "statusline": {
+    "normal": "color5",
+    "insert": "color3",
+    "visual": "color13",
+    "replace": "color1",
+    "command": "color6",
+    "terminal": "color2"
   }
 }

@@ -62,9 +62,12 @@ local m = {}
 
 --loads the colorscheme
 function m.load()
-  local palette = require("firefly-theme.palette")
-  local mappings = palette.get_mappings()
-  palette = palette.get()
+  local palette_module = require("firefly-theme.palette")
+  local mappings = palette_module.get_mappings()
+  local diagnostics = palette_module.get_diagnostics()
+  local variant = palette_module.get_variant()
+  local float_bg = palette_module.get_float_bg()
+  local palette = palette_module.get()
 
   vim.cmd('hi clear')
   vim.cmd('syntax reset')
@@ -73,18 +76,25 @@ function m.load()
 
   vim.opt.termguicolors    = true
 
+  -- Determine foreground/background based on variant
+  local is_light = variant == "light"
+  local normal_fg = is_light and palette.color0 or palette.color15
+  local normal_bg = is_light and palette.color15 or palette.bg0
+
   local option             = {
     -- either false or color
-    base    = palette.bg0,
+    base    = normal_bg,
     surface = palette.bg1,
     italic  = true,
+    is_light = is_light,
+    normal_fg = normal_fg,
   }
 
   option.dim_nc_background = (false and palette.bg0) or option.base
-  option.dim_nc_foreground = (false and palette.fg1) or palette.color15
+  option.dim_nc_foreground = (false and palette.fg1) or normal_fg
   option.bold_vert_split   = (false and palette.color8) or palette.none
 
-  local float_background   = palette.bg2
+  local float_background   = float_bg
 
   ---@type table<string, Highlight>
   local theme              = {
@@ -141,12 +151,12 @@ function m.load()
     ['MoreMsg']                                         = { fg = palette.color6 },
     ['NonText']                                         = { fg = palette.fg2 },
 
-    ['Normal']                                          = { fg = palette.color15, bg = option.base },
-    ['Normalfloat']                                     = { fg = palette.color15, bg = option.base },
+    ['Normal']                                          = { fg = option.normal_fg, bg = option.base },
+    ['NormalFloat']                                     = { fg = option.normal_fg, bg = float_background },
     ['NormalNC']                                        = { fg = option.dim_nc_foreground, bg = option.dim_nc_background },
     ['NvimInternalError']                               = { fg = palette.color15, bg = palette.color1 },
 
-    ['FloatBorder']                                     = { fg = palette.fg2, bg = option.surface },
+    ['FloatBorder']                                     = { fg = palette.fg2, bg = float_background },
     ['FloatTitle']                                      = { fg = palette.fg2 },
     --['FloatFooter']       = { },
 
@@ -225,11 +235,12 @@ function m.load()
     ['Typedef']                                         = { link = 'Type' },
     ['Underlined']                                      = { underline = true },
 
-    -- Diagnostics -- (using palette colors directly for UI elements)
-    ['DiagnosticError']                                 = { fg = palette.color1 },
-    ['DiagnosticHint']                                  = { fg = palette.color3 },
-    ['DiagnosticInfo']                                  = { fg = palette.color5 },
-    ['DiagnosticWarn']                                  = { fg = palette.color3 },
+    -- Diagnostics -- (using diagnostic mappings from theme)
+    ['DiagnosticError']                                 = { fg = palette[diagnostics.error] },
+    ['DiagnosticHint']                                  = { fg = palette[diagnostics.hint] },
+    ['DiagnosticInfo']                                  = { fg = palette[diagnostics.info] },
+    ['DiagnosticWarn']                                  = { fg = palette[diagnostics.warning] },
+    ['DiagnosticOk']                                    = { fg = palette[diagnostics.ok] },
     ['DiagnosticDefaultError']                          = { link = 'DiagnosticError' },
     ['DiagnosticDefaultHint']                           = { link = 'DiagnosticHint' },
     ['DiagnosticDefaultInfo']                           = { link = 'DiagnosticInfo' },
@@ -242,14 +253,14 @@ function m.load()
     ['DiagnosticSignHint']                              = { link = 'DiagnosticHint' },
     ['DiagnosticSignInfo']                              = { link = 'DiagnosticInfo' },
     ['DiagnosticSignWarn']                              = { link = 'DiagnosticWarn' },
-    ['DiagnosticStatusLineError']                       = { fg = palette.color1, bg = palette.bg1 },
-    ['DiagnosticStatusLineHint']                        = { fg = palette.color3, bg = palette.bg1 },
-    ['DiagnosticStatusLineInfo']                        = { fg = palette.color5, bg = palette.bg1 },
-    ['DiagnosticStatusLineWarn']                        = { fg = palette.color3, bg = palette.bg1 },
-    ['DiagnosticUnderlineError']                        = { fg = palette.color1, undercurl = true },
-    ['DiagnosticUnderlineHint']                         = { fg = palette.color3, undercurl = true },
-    ['DiagnosticUnderlineInfo']                         = { fg = palette.color5, undercurl = true },
-    ['DiagnosticUnderlineWarn']                         = { fg = palette.color3, undercurl = true },
+    ['DiagnosticStatusLineError']                       = { fg = palette[diagnostics.error], bg = palette.bg1 },
+    ['DiagnosticStatusLineHint']                        = { fg = palette[diagnostics.hint], bg = palette.bg1 },
+    ['DiagnosticStatusLineInfo']                        = { fg = palette[diagnostics.info], bg = palette.bg1 },
+    ['DiagnosticStatusLineWarn']                        = { fg = palette[diagnostics.warning], bg = palette.bg1 },
+    ['DiagnosticUnderlineError']                        = { sp = palette[diagnostics.error], undercurl = true },
+    ['DiagnosticUnderlineHint']                         = { sp = palette[diagnostics.hint], undercurl = true },
+    ['DiagnosticUnderlineInfo']                         = { sp = palette[diagnostics.info], undercurl = true },
+    ['DiagnosticUnderlineWarn']                         = { sp = palette[diagnostics.warning], undercurl = true },
     ['DiagnosticVirtualTextError']                      = { link = 'DiagnosticError' },
     ['DiagnosticVirtualTextHint']                       = { link = 'DiagnosticHint' },
     ['DiagnosticVirtualTextInfo']                       = { link = 'DiagnosticInfo' },

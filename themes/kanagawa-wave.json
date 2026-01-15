@@ -1,0 +1,61 @@
+{
+  "name": "Kanagawa Wave",
+  "description": "Cool dark theme inspired by the famous painting by Katsushika Hokusai - the default Kanagawa variant",
+  "variant": "dark",
+  "colors": {
+    "color0": "#1F1F28",
+    "color1": "#C34043",
+    "color2": "#98BB6C",
+    "color3": "#DCA561",
+    "color4": "#7E9CD8",
+    "color5": "#957FB8",
+    "color6": "#6A9589",
+    "color7": "#C8C093",
+    "color8": "#727169",
+    "color9": "#E82424",
+    "color10": "#76946A",
+    "color11": "#E6C384",
+    "color12": "#7FB4CA",
+    "color13": "#D27E99",
+    "color14": "#7AA89F",
+    "color15": "#DCD7BA",
+    "color16": "#FFA066",
+    "color17": "#FF9E3B",
+    "bg0": "#16161D",
+    "bg1": "#2A2A37",
+    "bg2": "#363646",
+    "fg0": "#DCD7BA",
+    "fg1": "#C8C093",
+    "fg2": "#54546D",
+    "float_bg": "#16161D"
+  },
+  "mappings": {
+    "comment": "color8",
+    "keyword": "color5",
+    "string": "color2",
+    "number": "color13",
+    "variable": "color1",
+    "fn": "color4",
+    "type": "color14",
+    "class": "color3",
+    "parameter": "color11",
+    "operator": "color15",
+    "builtin": "color6",
+    "property": "color11"
+  },
+  "diagnostics": {
+    "error": "color9",
+    "warning": "color17",
+    "info": "color4",
+    "hint": "color6",
+    "ok": "color2"
+  },
+  "statusline": {
+    "normal": "color5",
+    "insert": "color3",
+    "visual": "color4",
+    "replace": "color1",
+    "command": "color6",
+    "terminal": "color2"
+  }
+}
