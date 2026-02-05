@@ -99,7 +99,9 @@ vim.keymap.set('n', '<leader><leader>', function()
       function(picker)
         if not selection_restored then
           selection_restored = true
-          picker:set_selection(last_index)
+          -- Convert saved index back to row for current sorting strategy
+          local row = picker:get_row(last_index)
+          picker:set_selection(row)
         end
       end
     } or nil,
@@ -108,8 +110,10 @@ vim.keymap.set('n', '<leader><leader>', function()
         local current_picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
         if current_picker then
           local prompt = current_picker:_get_prompt()
+          -- Convert row to index for consistent storage
           local selection_row = current_picker:get_selection_row()
-          telescope_state.save_search("find_files", prompt, selection_row)
+          local selection_index = current_picker:get_index(selection_row)
+          telescope_state.save_search("find_files", prompt, selection_index)
         end
         require("telescope.actions").select_default(prompt_bufnr)
       end)
@@ -134,7 +138,9 @@ vim.keymap.set('n', '<leader>s', function()
       function(picker)
         if not selection_restored then
           selection_restored = true
-          picker:set_selection(last_index)
+          -- Convert saved index back to row for current sorting strategy
+          local row = picker:get_row(last_index)
+          picker:set_selection(row)
         end
       end
     } or nil,
@@ -143,8 +149,10 @@ vim.keymap.set('n', '<leader>s', function()
         local current_picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
         if current_picker then
           local prompt = current_picker:_get_prompt()
+          -- Convert row to index for consistent storage
           local selection_row = current_picker:get_selection_row()
-          telescope_state.save_search("live_grep", prompt, selection_row)
+          local selection_index = current_picker:get_index(selection_row)
+          telescope_state.save_search("live_grep", prompt, selection_index)
         end
         require("telescope.actions").select_default(prompt_bufnr)
       end)
