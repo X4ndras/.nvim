@@ -47,6 +47,31 @@ function firefly.colorize()
     local themes_dir = vim.fn.stdpath("config") .. "/themes"
 
     -- Scan themes directory for JSON files
+    local function read_json(path)
+        local file = io.open(path, "r")
+        if not file then
+            return nil
+        end
+        local content = file:read("*all")
+        file:close()
+        local ok, decoded = pcall(vim.json.decode, content)
+        if not ok then
+            return nil
+        end
+        return decoded
+    end
+
+    local function is_theme_file(path)
+        local data = read_json(path)
+        if not data then
+            return false
+        end
+        if data.colors or data.color0 or data.bg0 then
+            return true
+        end
+        return false
+    end
+
     local function scan_themes()
         local themes = {}
         local handle = vim.loop.fs_scandir(themes_dir)
@@ -55,10 +80,12 @@ function firefly.colorize()
                 local name, _ = vim.loop.fs_scandir_next(handle)
                 if not name then break end
 
-                -- Check for .json files and extract theme name
                 if name:match("%.json$") then
-                    local theme_name = name:gsub("%.json$", "")
-                    table.insert(themes, theme_name)
+                    local theme_path = string.format("%s/%s", themes_dir, name)
+                    if is_theme_file(theme_path) then
+                        local theme_name = name:gsub("%.json$", "")
+                        table.insert(themes, theme_name)
+                    end
                 end
             end
         end

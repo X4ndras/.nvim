@@ -35,35 +35,98 @@ local function diagnostics()
     return diagnostic
 end
 
-local function set_hl()
-    local palette = require('firefly-theme.palette')
-    palette = palette.get()
+local function resolve_color(color_key, palette, mode_colors)
+    if not color_key then
+        return nil
+    end
 
-    vim.api.nvim_set_hl(0, 'isle',
-        { fg = modes.get_modes().color.fg, bg = modes.get_modes().color.bg })
+    if color_key == "mode_bg" then
+        return mode_colors.bg
+    end
 
-    vim.api.nvim_set_hl(0, 'isle_ends',
-        { fg = modes.get_modes().color.bg , bg = palette.bg0 })
+    if color_key == "mode_fg" then
+        return mode_colors.fg
+    end
 
+    if palette[color_key] then
+        return palette[color_key]
+    end
+
+    return color_key
+end
+
+local function set_hl(mode_colors, palette)
     vim.api.nvim_set_hl(0, 'dgn',
         { fg = palette.bg1, bg = palette.bg0 })
+
+    vim.api.nvim_set_hl(0, 'StatuslineMode',
+        { fg = mode_colors.fg, bg = mode_colors.bg })
+end
+
+local function segment_text(segment, mode_info)
+    if segment.type == "mode" then
+        if segment.text then
+            return segment.text:gsub("{mode}", mode_info.mode)
+        end
+        return mode_info.mode
+    end
+
+    if segment.type == "diagnostics" then
+        return diagnostics()
+    end
+
+    if segment.type == "raw" then
+        return segment.text or ""
+    end
+
+    return segment.text or ""
+end
+
+local function apply_highlight(segment, text, palette, mode_colors, index)
+    if text == "" then
+        return ""
+    end
+
+    if segment.type == "raw" or segment.type == "diagnostics" then
+        return text
+    end
+
+    local fg = resolve_color(segment.fg, palette, mode_colors)
+    local bg = resolve_color(segment.bg, palette, mode_colors)
+
+    if not fg and not bg then
+        return text
+    end
+
+    local group = string.format("StatuslineSegment%d", index)
+    vim.api.nvim_set_hl(0, group, { fg = fg, bg = bg })
+    return string.format("%%#%s#%s", group, text)
+end
+
+local function build_statusline()
+    local palette_module = require('firefly-theme.palette')
+    local palette = palette_module.get()
+    local layout = palette_module.get_statusline_layout() or {}
+    local mode_info = modes.get_modes()
+    local mode_colors = mode_info.color
+
+    set_hl(mode_colors, palette)
+
+    local statusline = ""
+    for index, segment in ipairs(layout) do
+        if segment.type == "align" then
+            statusline = statusline .. "%="
+        else
+            local text = segment_text(segment, mode_info)
+            statusline = statusline .. apply_highlight(segment, text, palette, mode_colors, index)
+        end
+    end
+
+    return statusline
 end
 
 local function set_statusline()
-    set_hl()
-    vim.wo.statusline = '%#isle_ends#'
-        .. ' %#isle#' .. modes.get_modes().mode .. '%#isle_ends#'
-        .. ' %#isle#%<%f %-3.(%h%m%r%)%#isle_ends# '
-        .. '%#isle#' .. vim.bo.fileencoding .. '%#isle_ends#'
-        .. '%='
-        .. '%#dgn#' .. diagnostics() .. '%#dgn#%#isle_ends#'
-        .. '%='
-        -- Center the diagnostics about 20 chars / 2 (no double digets)
-        .. string.rep(' ', 10)
-        .. '%#isle#%-6.('
-        .. '%l/%v%)%#isle_ends# '
-        .. '%#isle#%-5.(%p%% %)%#isle_ends# '
-        .. '%#isle#%P%#isle_ends# '
+    vim.wo.statusline = build_statusline()
 end
 
 function m.setup()
@@ -78,8 +141,6 @@ function m.setup()
         'FileChangedShellPost',
         'VimResized',
         'Filetype',
-        --'CursorMoved',
-        --'CursorMovedI'
         },
         { callback = set_statusline}
     )

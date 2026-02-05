@@ -104,8 +104,34 @@ m.statusline = {
   terminal = "color2",   -- Green
 }
 
----@param path string
-function m.read_theme(path)
+m.statusline_layout = {
+  { type = "text", text = " ", fg = "mode_bg", bg = "bg0" },
+  { type = "mode", fg = "mode_fg", bg = "mode_bg" },
+  { type = "text", text = "", fg = "mode_bg", bg = "bg0" },
+  { type = "text", text = " ", fg = "mode_bg", bg = "bg0" },
+  { type = "text", text = "%<%f %-3.(%h%m%r%)", fg = "mode_fg", bg = "mode_bg" },
+  { type = "text", text = " ", fg = "mode_bg", bg = "bg0" },
+  { type = "text", text = "", fg = "mode_bg", bg = "bg0" },
+  { type = "text", text = "%{&fileencoding}", fg = "mode_fg", bg = "mode_bg" },
+  { type = "text", text = "", fg = "mode_bg", bg = "bg0" },
+  { type = "align" },
+  { type = "raw", text = "%#dgn#" },
+  { type = "diagnostics" },
+  { type = "raw", text = "%#dgn#" },
+  { type = "align" },
+  { type = "text", text = "          ", fg = "mode_fg", bg = "bg0" },
+  { type = "text", text = "", fg = "mode_bg", bg = "bg0" },
+  { type = "text", text = "%-6.(%l/%v%)", fg = "mode_fg", bg = "mode_bg" },
+  { type = "text", text = " ", fg = "mode_bg", bg = "bg0" },
+  { type = "text", text = "", fg = "mode_bg", bg = "bg0" },
+  { type = "text", text = "%-5.(%p%% %)", fg = "mode_fg", bg = "mode_bg" },
+  { type = "text", text = " ", fg = "mode_bg", bg = "bg0" },
+  { type = "text", text = "", fg = "mode_bg", bg = "bg0" },
+  { type = "text", text = "%P", fg = "mode_fg", bg = "mode_bg" },
+  { type = "text", text = " ", fg = "mode_bg", bg = "bg0" },
+}
+
+local function read_json_file(path)
   local file, err = io.open(path, 'r')
   if not file then
     print("Error loading file: " .. tostring(err))
@@ -121,39 +147,73 @@ function m.read_theme(path)
     return nil
   end
 
-  -- Store metadata if provided
-  if val.name then
-    m.name = val.name
-  end
-  if val.description then
-    m.description = val.description
-  end
-  if val.variant then
-    m.variant = val.variant
+  return val
+end
+
+local function apply_theme_data(val, is_primary)
+  if not val then
+    return
   end
 
-  -- Handle the new JSON structure with colors and mappings
+  if is_primary then
+    if val.name then
+      m.name = val.name
+    end
+    if val.description then
+      m.description = val.description
+    end
+    if val.variant then
+      m.variant = val.variant
+    end
+  end
+
   if val.colors then
     m.palette = vim.tbl_deep_extend('force', m.palette, val.colors)
-  else
-    -- Legacy format - entire JSON is colors
+  elseif val.color0 or val.bg0 then
     m.palette = vim.tbl_deep_extend('force', m.palette, val)
   end
 
-  -- Store mappings if provided
   if val.mappings then
     m.mappings = vim.tbl_deep_extend('force', m.mappings, val.mappings)
   end
 
-  -- Store diagnostic mappings if provided
   if val.diagnostics then
     m.diagnostics = vim.tbl_deep_extend('force', m.diagnostics, val.diagnostics)
   end
 
-  -- Store statusline mappings if provided
   if val.statusline then
-    m.statusline = vim.tbl_deep_extend('force', m.statusline, val.statusline)
+    local statusline_data = val.statusline
+    if statusline_data.modes then
+      m.statusline = vim.tbl_deep_extend('force', m.statusline, statusline_data.modes)
+    elseif statusline_data.normal then
+      m.statusline = vim.tbl_deep_extend('force', m.statusline, statusline_data)
+    end
+
+    if statusline_data.layout then
+      m.statusline_layout = statusline_data.layout
+    end
   end
+end
+
+---@param path string
+function m.read_theme(path)
+  local val = read_json_file(path)
+  if not val then
+    return nil
+  end
+
+  local dir = path:match("(.+)/[^/]+$") or "."
+  if type(val.imports) == "table" then
+    for _, import_name in ipairs(val.imports) do
+      if type(import_name) == "string" then
+        local import_path = string.format("%s/%s", dir, import_name)
+        local import_data = read_json_file(import_path)
+        apply_theme_data(import_data, false)
+      end
+    end
+  end
+
+  apply_theme_data(val, true)
 
   return m.palette
 end
@@ -181,6 +241,10 @@ end
 
 function m.get_statusline()
   return m.statusline
+end
+
+function m.get_statusline_layout()
+  return m.statusline_layout
 end
 
 function m.get_variant()
