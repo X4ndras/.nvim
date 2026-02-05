@@ -14,7 +14,7 @@ require('telescope').setup{
         border = true,
         sorting_strategy = "ascending",
         color_devicons = true,
-        prompt_prefix = "   ",
+        prompt_prefix = "   ",
         selection_caret = "󰄾 ",
         file_ignore_patterns = {
             'node_modules/*',

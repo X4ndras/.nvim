@@ -87,8 +87,76 @@ vim.keymap.set('n', '<leader>m', function()
 end, { noremap = true, silent = true })
 
 vim.keymap.set('n', '<M-u>', function() vim.api.nvim_command('UndotreeToggle') end)
-vim.keymap.set('n', '<leader><leader>', function() vim.cmd('Telescope find_files') end)
-vim.keymap.set('n', '<leader>s', function() vim.cmd('Telescope live_grep') end)
+vim.keymap.set('n', '<leader><leader>', function()
+  local telescope_state = require('firefly.plugins.telescope_state')
+  local last_query, last_index = telescope_state.load_search("find_files")
+  local selection_restored = false
+  
+  require('telescope.builtin').find_files({
+    default_text = last_query or "",
+    prompt_title = "Find Files" .. (last_query and " (last: " .. last_query .. ")" or ""),
+    on_complete = last_index and {
+      function(picker)
+        if not selection_restored then
+          selection_restored = true
+          picker:set_selection(last_index)
+        end
+      end
+    } or nil,
+    attach_mappings = function(prompt_bufnr, map)
+      map('i', '<CR>', function()
+        local current_picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
+        if current_picker then
+          local prompt = current_picker:_get_prompt()
+          local selection_row = current_picker:get_selection_row()
+          telescope_state.save_search("find_files", prompt, selection_row)
+        end
+        require("telescope.actions").select_default(prompt_bufnr)
+      end)
+      -- Clear state when closing Telescope
+      map('i', '<Esc>', function()
+        telescope_state.clear_search("find_files")
+        require("telescope.actions").close(prompt_bufnr)
+      end)
+      return true
+    end,
+  })
+end)
+vim.keymap.set('n', '<leader>s', function()
+  local telescope_state = require('firefly.plugins.telescope_state')
+  local last_query, last_index = telescope_state.load_search("live_grep")
+  local selection_restored = false
+  
+  require('telescope.builtin').live_grep({
+    default_text = last_query or "",
+    prompt_title = "Live Grep" .. (last_query and " (last: " .. last_query .. ")" or ""),
+    on_complete = last_index and {
+      function(picker)
+        if not selection_restored then
+          selection_restored = true
+          picker:set_selection(last_index)
+        end
+      end
+    } or nil,
+    attach_mappings = function(prompt_bufnr, map)
+      map('i', '<CR>', function()
+        local current_picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
+        if current_picker then
+          local prompt = current_picker:_get_prompt()
+          local selection_row = current_picker:get_selection_row()
+          telescope_state.save_search("live_grep", prompt, selection_row)
+        end
+        require("telescope.actions").select_default(prompt_bufnr)
+      end)
+      -- Clear state when closing Telescope
+      map('i', '<Esc>', function()
+        telescope_state.clear_search("live_grep")
+        require("telescope.actions").close(prompt_bufnr)
+      end)
+      return true
+    end,
+  })
+end)
 --vim.keymap.set('n', '<leader>d', function() vim.lsp.buf.type_definition() end)
 vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
 
