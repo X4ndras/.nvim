@@ -12,6 +12,17 @@ vim.keymap.set("n", "<M-L>", "<C-w>L")
 
 vim.keymap.set("n", "<leader>w", "<C-w>")
 
+vim.keymap.set('n', '<leader>d', function()
+  local ok = pcall(require, 'nvim-tree')
+  if not ok then
+    return
+  end
+  local api_ok, api = pcall(require, 'nvim-tree.api')
+  if api_ok then
+    api.tree.toggle()
+  end
+end, { noremap = true, silent = true })
+
 -- fluent scrolling (lazy loaded - require cinnamon only when used)
 local function cinnamon_scroll(cmd)
   return function()
@@ -60,7 +71,18 @@ vim.keymap.set({
 
 
 
-vim.keymap.set("n", "<leader>x", vim.cmd.Ex)
+vim.keymap.set("n", "<leader>x", function()
+  local ok, telescope = pcall(require, 'telescope')
+  if not ok then
+    vim.cmd.Ex()
+    return
+  end
+
+  telescope.extensions.file_browser.file_browser({
+    path = vim.fn.expand('%:p:h'),
+    select_buffer = true,
+  })
+end)
 
 vim.keymap.set('n', '<leader>e', function() vim.diagnostic.open_float() end)
 vim.keymap.set('n', '<leader>i', function ()
@@ -86,7 +108,7 @@ vim.keymap.set('n', '<leader>m', function()
   end
 end, { noremap = true, silent = true })
 
-vim.keymap.set('n', '<M-u>', function() vim.api.nvim_command('UndotreeToggle') end)
+vim.keymap.set('n', '<leader>u', function() vim.api.nvim_command('UndotreeToggle') end)
 vim.keymap.set('n', '<leader><leader>', function()
   local telescope_state = require('firefly.plugins.telescope_state')
   local last_query, last_index = telescope_state.load_search("find_files")
@@ -94,7 +116,7 @@ vim.keymap.set('n', '<leader><leader>', function()
   
   require('telescope.builtin').find_files({
     default_text = last_query or "",
-    prompt_title = "Find Files" .. (last_query and " (last: " .. last_query .. ")" or ""),
+    prompt_title = "Find Files",
     on_complete = last_index and {
       function(picker)
         if not selection_restored then
@@ -133,7 +155,7 @@ vim.keymap.set('n', '<leader>s', function()
   
   require('telescope.builtin').live_grep({
     default_text = last_query or "",
-    prompt_title = "Live Grep" .. (last_query and " (last: " .. last_query .. ")" or ""),
+    prompt_title = "Live Grep",
     on_complete = last_index and {
       function(picker)
         if not selection_restored then

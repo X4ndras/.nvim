@@ -94,6 +94,30 @@ local plugins = {
     end,
   },
 
+  {
+    'nvim-telescope/telescope-file-browser.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
+  },
+
+  -- File tree with git status
+  {
+    'nvim-tree/nvim-tree.lua',
+    lazy = true,
+    module = 'nvim-tree',
+    dependencies = {
+      {
+        'nvim-tree/nvim-web-devicons',
+        opts = {
+          color_icons = false,
+          default = true,
+        },
+      },
+    },
+    config = function()
+      require('firefly.plugins.nvim_tree')
+    end,
+  },
+
   -- code hilighting - defer until file is opened
   {
     'nvim-treesitter/nvim-treesitter',
@@ -155,7 +179,6 @@ local plugins = {
   {
     'mbbill/undotree',
     cmd = "UndotreeToggle",
-    keys = { { "<leader>u", "<cmd>UndotreeToggle<CR>", desc = "Undotree" } },
   },
 
   -- Smooth Scrolling - defer to VeryLazy

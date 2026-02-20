@@ -43,4 +43,11 @@ require('telescope').setup{
             theme = 'dropdown',
         },
     },
+    extensions = {
+        file_browser = {
+            hijack_netrw = true,
+        },
+    },
 }
+
+pcall(require('telescope').load_extension, 'file_browser')
