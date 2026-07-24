@@ -1,4 +1,5 @@
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local lazy_lsp = require("lazy-lsp")
 
 local function set_tab_size(bufnr, size)
   vim.bo[bufnr].tabstop = size
@@ -12,6 +13,107 @@ local server_configs = {
   python = 4,
   javascript = 2,
 }
+
+local ts_ls_filetypes = {
+  "javascript",
+  "javascriptreact",
+  "typescript",
+  "typescriptreact",
+  "vue",
+}
+
+local vue_language_server_path
+
+local function resolve_vue_language_server_path()
+  if vue_language_server_path ~= nil then
+    return vue_language_server_path
+  end
+
+  local expr = [[let pkgs = import <nixpkgs> {}; in pkgs.nodePackages."@vue/language-server".outPath]]
+  local result = vim.system({
+    "nix",
+    "--extra-experimental-features",
+    "nix-command",
+    "eval",
+    "--raw",
+    "--impure",
+    "--expr",
+    expr,
+  }, { text = true }):wait()
+
+  if result.code ~= 0 then
+    vim.notify(
+      "Could not resolve @vue/language-server from Nixpkgs; Vue TS support will be incomplete.",
+      vim.log.levels.WARN
+    )
+    vue_language_server_path = false
+    return nil
+  end
+
+  local out_path = vim.trim(result.stdout)
+  vue_language_server_path = out_path .. "/lib/language-tools/packages/language-server"
+  return vue_language_server_path
+end
+
+local function vue_typescript_plugin()
+  local location = resolve_vue_language_server_path()
+  if not location then
+    return nil
+  end
+
+  return {
+    name = "@vue/typescript-plugin",
+    location = location,
+    languages = { "vue" },
+    configNamespace = "typescript",
+  }
+end
+
+local function vue_ts_request_forwarder(client)
+  local retries = 0
+  local max_retries = 120
+  local retry_delay_ms = 250
+
+  ---@param _ lsp.ResponseError
+  ---@param result any
+  ---@param context lsp.HandlerContext
+  local function typescript_handler(_, result, context)
+    local ts_client = vim.lsp.get_clients({ bufnr = context.bufnr, name = "ts_ls" })[1]
+      or vim.lsp.get_clients({ bufnr = context.bufnr, name = "vtsls" })[1]
+      or vim.lsp.get_clients({ bufnr = context.bufnr, name = "typescript-tools" })[1]
+
+    if not ts_client then
+      if retries < max_retries then
+        retries = retries + 1
+        vim.defer_fn(function()
+          typescript_handler(_, result, context)
+        end, retry_delay_ms)
+      else
+        vim.notify(
+          "Could not find `ts_ls`, `vtsls`, or `typescript-tools` lsp client required by `vue_ls`.",
+          vim.log.levels.ERROR
+        )
+      end
+      return
+    end
+
+    local id, command, payload = unpack(assert(result))
+    ts_client:exec_cmd({
+      title = "vue_request_forward",
+      command = "typescript.tsserverRequest",
+      arguments = {
+        command,
+        payload,
+      },
+    }, { bufnr = context.bufnr }, function(_, response)
+      local response_data = { { id, response and response.body } }
+      ---@diagnostic disable-next-line: param-type-mismatch
+      client:notify("tsserver/response", response_data)
+    end)
+  end
+
+  client.handlers["tsserver/request"] = typescript_handler
+end
 
 --- client, buf
 local lsp_attach = function(_, buf)
@@ -46,7 +148,7 @@ local lsp_attach = function(_, buf)
   set_tab_size(buf, tab_size)
 end
 
-require("lazy-lsp").setup {
+lazy_lsp.setup {
   use_vim_lsp_config = true,
   excluded_servers = {
     "buf_ls",
@@ -69,9 +171,67 @@ require("lazy-lsp").setup {
     lua        = { "lua_ls" },
     javascript = { "ts_ls" },
     typescript = { "ts_ls" },
+    vue        = { "vue_ls", "ts_ls" },
+  },
+  configs = {
+    ts_ls = {
+      -- Keep ts_ls on a static command so lazy-lsp can provision it from Nix.
+      cmd = lazy_lsp.in_shell({
+        "typescript-language-server",
+        "typescript",
+        'nodePackages."@vue/language-server"',
+      }, {
+        "typescript-language-server",
+        "--stdio",
+      }),
+      filetypes = ts_ls_filetypes,
+      before_init = function(_, config)
+        local vue_plugin = vue_typescript_plugin()
+        if not vue_plugin then
+          return
+        end
+
+        config.init_options = config.init_options or {}
+        config.init_options.plugins = config.init_options.plugins or {}
+
+        local has_vue_plugin = vim.iter(config.init_options.plugins):any(function(plugin)
+          return plugin.name == vue_plugin.name
+        end)
+        if not has_vue_plugin then
+          table.insert(config.init_options.plugins, vue_plugin)
+        end
+      end,
+    },
+    vue_ls = {
+      on_init = vue_ts_request_forwarder,
+    },
   },
   prefer_local = false,
 }
+
+-- Neovim 0.12 + lazy-lsp's vim.lsp.config path currently skips some upstream
+-- configs whose `cmd` is a function (for example ts_ls). Enable the servers we
+-- actually rely on when lazy-lsp reports that it skipped them.
+local lazy_lsp_issues = require("lazy-lsp.state").get_issues()
+local skipped_dynamic_cmd_servers = {}
+for _, issue in ipairs(lazy_lsp_issues) do
+  local server = issue.message:match("^([%w_]+) has dynamic `cmd`, config will not work$")
+  if server then
+    skipped_dynamic_cmd_servers[server] = true
+  end
+end
+
+for _, server in ipairs({ "ts_ls", "html", "cssls", "jsonls", "yamlls", "eslint" }) do
+  if skipped_dynamic_cmd_servers[server] then
+    vim.lsp.enable(server)
+  end
+end
+
+if vim.fn.exists(":LspInfo") == 0 then
+  vim.api.nvim_create_user_command("LspInfo", "checkhealth vim.lsp", {
+    desc = "Alias to :checkhealth vim.lsp",
+  })
+end
 
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 vim.lsp.config("*", {
@@ -83,7 +243,6 @@ vim.lsp.config("*", {
     mine = lsp_attach,
     default = lsp_attach,
   },
-  root = vim.loop.cwd(),
   general = {
     positionEncodings = { "utf-8", "utf-16" }
   },

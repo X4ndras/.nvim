@@ -123,7 +123,7 @@ local plugins = {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     event = { "BufReadPost", "BufNewFile" },
-    dependencies = { 'nvim-treesitter/nvim-treesitter-refactor' },
+    dependencies = {},
     config = function()
       require('firefly.plugins.treesitter')
     end,
