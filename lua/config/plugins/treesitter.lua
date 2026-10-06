@@ -5,6 +5,9 @@ for _, lang in ipairs(ts.get_available()) do
     available[lang] = true
 end
 
+local attempted = {}
+local warned_cli = false
+
 local function start(buf, lang)
     -- Check whether a parser already exists somewhere on runtimepath.
     if not vim.treesitter.language.add(lang) then
@@ -38,8 +41,21 @@ vim.api.nvim_create_autocmd("FileType", {
             return
         end
 
-        -- nvim-treesitter doesn't provide this parser.
-        if not available[lang] then
+        -- nvim-treesitter doesn't provide this parser, or we already tried.
+        if not available[lang] or attempted[lang] then
+            return
+        end
+        attempted[lang] = true
+
+        -- Building parsers requires the tree-sitter CLI (brew install tree-sitter-cli).
+        if vim.fn.executable("tree-sitter") == 0 then
+            if not warned_cli then
+                warned_cli = true
+                vim.notify(
+                    "tree-sitter CLI not found; skipping parser auto-install",
+                    vim.log.levels.WARN
+                )
+            end
             return
         end
 
@@ -48,11 +64,16 @@ vim.api.nvim_create_autocmd("FileType", {
           vim.log.levels.INFO
         )
 
-        -- Install missing parser automatically.
-        ts.install({ lang }):wait(300000)
-
-        if vim.api.nvim_buf_is_valid(buf) then
-            start(buf, lang)
-        end
+        -- Install missing parser automatically, without blocking the UI.
+        ts.install({ lang }):await(function(err, ok)
+            if err or not ok then
+                return
+            end
+            vim.schedule(function()
+                if vim.api.nvim_buf_is_valid(buf) then
+                    start(buf, lang)
+                end
+            end)
+        end)
     end,
 })

@@ -4,13 +4,13 @@
       "rev": "4516612fe98ff56ae0415a259ff6361a89419b0a",
       "src": "https://github.com/sindrets/diffview.nvim"
     },
-    "gitsigns.nvim": {
-      "rev": "aafce231e57bf2c06940b6de90b9f396aee94754",
-      "src": "https://github.com/lewis6991/gitsigns.nvim"
+    "firefly.nvim": {
+      "rev": "a34d289ccbb572fce65815726f8ff281005ca505",
+      "src": "https://github.com/X4ndras/firefly.nvim"
     },
-    "leadm.nvim": {
-      "rev": "1e2ac29178e18abc3191c62389045e4fc20fef30",
-      "src": "https://github.com/X4ndras/leadm.nvim"
+    "gitsigns.nvim": {
+      "rev": "8d79f2410c76e62b92e51c28c82e28c1c5a3daeb",
+      "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "mason-lspconfig.nvim": {
       "rev": "77e06f7d2fc127e6ef0a720b59acbc50757cff19",

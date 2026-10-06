@@ -26,6 +26,7 @@ vim.pack.add({
   "https://github.com/sindrets/diffview.nvim",
 
   -- own
-  "https://github.com/X4ndras/leadm.nvim",
+  -- "https://github.com/X4ndras/leadm.nvim",
+  -- "https://github.com/X4ndras/firefly.nvim",
 })
 
