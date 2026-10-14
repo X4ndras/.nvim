@@ -2,7 +2,7 @@ local M = {}
 
 function M.diagnose()
   vim.diagnostic.open_float({
-      scope = "cursor",
+      scope = "line",
       source = true
   })
 end

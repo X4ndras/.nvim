@@ -23,10 +23,8 @@ vim.api.nvim_create_autocmd('BufAdd', {
 
 -- vim.opt.pumheight = 20
 -- vim.opt.showmode = false
--- vim.opt.updatetime = 100
+vim.opt.updatetime = 250
 -- vim.opt.wrap = false
 -- vim.opt.signcolumn = 'yes'
 -- vim.opt.laststatus = 3
-
-
 
