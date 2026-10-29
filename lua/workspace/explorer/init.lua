@@ -20,6 +20,14 @@ local ROOT = "ws:root"
 
 local git_dirty = true
 
+local skip_follow_until = 0
+
+--- Don't reveal the next opened file (for a short moment). Used when a file
+--- is opened from the tree and the cursor should stay where it is.
+function M.skip_follow()
+  skip_follow_until = uv.hrtime() + 500 * 1e6
+end
+
 --- Mark Git status as stale; the next render fetches it again.
 function M.git_changed()
   git_dirty = true
@@ -388,6 +396,9 @@ M.setup = function(config, global_config)
     manager.subscribe(M.name, {
       event = events.VIM_BUFFER_ENTER,
       handler = function(args)
+        if uv.hrtime() < skip_follow_until then
+          return
+        end
         if utils.is_real_file(args.afile) then
           M.reveal(vim.api.nvim_buf_get_name(0))
         end
