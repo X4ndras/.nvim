@@ -7,7 +7,17 @@ local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local map = vim.keymap.set
 
-telescope.setup({})
+telescope.setup({
+    defaults = {
+        mappings = {
+            -- Move through results while typing, without leaving the prompt.
+            i = {
+                ["<M-j>"] = actions.move_selection_next,
+                ["<M-k>"] = actions.move_selection_previous,
+            },
+        },
+    },
+})
 
 local function git_diff()
     local root = vim.fn.getcwd()
