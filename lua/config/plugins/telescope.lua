@@ -21,25 +21,33 @@ telescope.setup({
 
 local function git_diff()
     local root = vim.fn.getcwd()
-
-    local git_dirs = vim.fs.find(".git", {
-        path = root,
-        limit = math.huge,
-    })
-
     local repos = {}
-    local seen = {}
 
-    for _, git_path in ipairs(git_dirs) do
-        local repo = vim.fs.dirname(git_path)
+    local workspace = require("workspace").current()
 
-        if not seen[repo] then
-            seen[repo] = true
-            table.insert(repos, repo)
+    if workspace then
+        -- Only the repositories of the open workspace.
+        repos = require("workspace.repos").all(workspace)
+        root = vim.uv.os_homedir()
+    else
+        local git_dirs = vim.fs.find(".git", {
+            path = root,
+            limit = math.huge,
+        })
+
+        local seen = {}
+
+        for _, git_path in ipairs(git_dirs) do
+            local repo = vim.fs.dirname(git_path)
+
+            if not seen[repo] then
+                seen[repo] = true
+                table.insert(repos, repo)
+            end
         end
-    end
 
-    table.sort(repos)
+        table.sort(repos)
+    end
 
     if #repos == 0 then
         vim.notify("No Git repositories found", vim.log.levels.INFO)
@@ -88,11 +96,40 @@ local function git_diff()
     }):find()
 end
 
-map("n", "<leader><leader>", builtin.find_files, {
+-- With a workspace open, search only its projects; otherwise the cwd.
+local function workspace_dirs()
+    local workspace = require("workspace").current()
+    if not workspace then
+        return nil
+    end
+    local dirs = vim.tbl_filter(function(dir)
+        return vim.uv.fs_stat(dir) ~= nil
+    end, require("workspace.store").projects(workspace))
+    return #dirs > 0 and dirs or nil
+end
+
+local function in_workspace(picker, title)
+    return function()
+        local dirs = workspace_dirs()
+        if not dirs then
+            picker()
+            return
+        end
+        picker({
+            search_dirs = dirs,
+            prompt_title = title .. " (" .. require("workspace").current().name .. ")",
+            path_display = function(_, path)
+                return vim.fn.fnamemodify(path, ":~")
+            end,
+        })
+    end
+end
+
+map("n", "<leader><leader>", in_workspace(builtin.find_files, "Find files"), {
     desc = "Find files",
 })
 
-map("n", "<leader>ff", builtin.live_grep, {
+map("n", "<leader>s", in_workspace(builtin.live_grep, "Find text"), {
     desc = "Find text",
 })
 
