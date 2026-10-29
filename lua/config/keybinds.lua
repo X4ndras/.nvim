@@ -3,10 +3,8 @@ local map = vim.keymap.set
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
-map("n", "<leader>ws", "<C-w>s")
-map("n", "<leader>wv", "<C-w>v")
-map("n", "<leader>wq", "<C-w>q")
-map("n", "<leader>wc", "<C-w>c")
+map("n", "<leader>w", "<C-w>")
+
 map("n", "<leader>x", "<cmd>Ex<CR>")
 
 map("n", "<M-h>", "<C-w>h")
