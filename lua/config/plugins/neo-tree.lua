@@ -39,6 +39,16 @@ require("neo-tree").setup({
     },
 })
 
+-- A restored session (:restart, workspace switch) brings back tree windows as
+-- empty buffers named "neo-tree <source> [n]". Neo-tree then can't create
+-- its own buffer under that name (E95), so remove them after every session load.
+vim.api.nvim_create_autocmd("SessionLoadPost", {
+    group = vim.api.nvim_create_augroup("neo_tree_session_cleanup", { clear = true }),
+    callback = function()
+        require("neo-tree.ui.renderer").clean_invalid_neotree_buffers(true)
+    end,
+})
+
 require("workspace").setup({})
 require("workspace.head").setup()
 
