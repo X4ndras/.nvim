@@ -27,7 +27,8 @@ require("firefly").setup({
   -- theme = "firefly",
   -- themes_dir = nil,
   -- persist = true,
-  transparent = true,
+  -- Off: the mid-tone "dusk" theme needs its own background.
+  transparent = false,
   -- italic_comments = true,
   -- dim_inactive = false,
   statusline = {

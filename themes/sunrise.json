@@ -1,0 +1,113 @@
+{
+  "name": "Sunrise",
+  "description": "The warm dark just before sunrise: gold, amber, terracotta and sage on deep ember brown",
+  "variant": "dark",
+  "colors": {
+    "bg0": "#241d17",
+    "bg1": "#3b3129",
+    "bg2": "#493e33",
+    "float_bg": "#1d1812",
+    "color0": "#1a1510",
+    "color1": "#e1a280",
+    "color2": "#a2c390",
+    "color3": "#e0c07b",
+    "color4": "#8fc1cd",
+    "color5": "#b8bc90",
+    "color6": "#90c3bc",
+    "color7": "#b7b0a7",
+    "color8": "#b9ae9e",
+    "color9": "#e6ac86",
+    "color10": "#b3cf98",
+    "color11": "#e5cc89",
+    "color12": "#9dcad5",
+    "color13": "#c1c599",
+    "color14": "#a0cfc8",
+    "color15": "#e2dacc",
+    "color16": "#e3aa73",
+    "color17": "#e4b572",
+    "fg0": "#e1dace",
+    "fg1": "#c5bcb0",
+    "fg2": "#b6aea5"
+  },
+  "mappings": {
+    "comment": "color8",
+    "keyword": "color16",
+    "string": "color2",
+    "number": "color9",
+    "variable": "color15",
+    "fn": "color3",
+    "type": "color4",
+    "class": "color12",
+    "parameter": "color17",
+    "operator": "color7",
+    "builtin": "color5",
+    "property": "color6"
+  },
+  "diagnostics": {
+    "error": "color1",
+    "warning": "color11",
+    "info": "color12",
+    "hint": "color14",
+    "ok": "color10"
+  },
+  "highlights": {
+    "DiffAdd": {
+      "bg": "#253a26"
+    },
+    "DiffChange": {
+      "bg": "#1f3842"
+    },
+    "DiffDelete": {
+      "fg": "fg2",
+      "bg": "#482c24"
+    },
+    "DiffText": {
+      "bg": "#134658",
+      "bold": true
+    },
+    "DiffTextAdd": {
+      "bg": "#28492a",
+      "bold": true
+    },
+    "RenderMarkdownH1Bg": {
+      "fg": "color3",
+      "bg": "bg1",
+      "bold": true
+    },
+    "RenderMarkdownH2Bg": {
+      "fg": "color16",
+      "bg": "bg1",
+      "bold": true
+    },
+    "RenderMarkdownH3Bg": {
+      "fg": "color2",
+      "bg": "bg1",
+      "bold": true
+    },
+    "RenderMarkdownH4Bg": {
+      "fg": "color4",
+      "bg": "bg1",
+      "bold": true
+    },
+    "RenderMarkdownH5Bg": {
+      "fg": "color6",
+      "bg": "bg1",
+      "bold": true
+    },
+    "RenderMarkdownH6Bg": {
+      "fg": "color5",
+      "bg": "bg1",
+      "bold": true
+    }
+  },
+  "statusline": {
+    "modes": {
+      "normal": "color3",
+      "insert": "color2",
+      "visual": "color4",
+      "replace": "color1",
+      "command": "color16",
+      "terminal": "color6"
+    }
+  }
+}
