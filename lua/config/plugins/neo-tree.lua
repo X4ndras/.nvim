@@ -26,10 +26,21 @@ require("neo-tree").setup({
         follow_current_file = {
             enabled = true,
         },
+        components = {
+            -- Root folder shows the repo's branch and tag (or commit).
+            name = function(config, node, state)
+                local name = require("neo-tree.sources.common.components").name(config, node, state)
+                if node:get_depth() ~= 1 or node.type ~= "directory" then
+                    return name
+                end
+                return require("workspace.head").decorate(name, node.path)
+            end,
+        },
     },
 })
 
 require("workspace").setup({})
+require("workspace.head").setup()
 
 -- Workspace tree when a workspace is open, plain file tree otherwise.
 -- Everything else workspace-related is in the leadm menu (<leader>m).

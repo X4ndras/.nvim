@@ -24,7 +24,7 @@ M.name = function(config, node, state)
   elseif node.type == "missing" then
     return { text = node.name .. " (not found)", highlight = highlights.DIM_TEXT }
   elseif node.extra and node.extra.project then
-    return { text = node.name, highlight = "Title" }
+    return require("workspace.head").decorate({ text = node.name, highlight = "Title" }, node.path)
   end
   return common.name(config, node, state)
 end
